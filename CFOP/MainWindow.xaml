@@ -7,6 +7,22 @@
         mc:Ignorable="d"
         Title="CFLOP" Height="350" Width="525">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0" 
+                Margin="10 5" 
+                IsEnabled="{Binding IsIdle}" 
+                Command="{Binding StartRecognitionCommand}">Start Recognition</Button>
+
+        <TextBox Grid.Row="1" 
+                 HorizontalAlignment="Stretch" 
+                 VerticalAlignment="Stretch" 
+                 TextWrapping="Wrap" 
+                 Text="{Binding Message,Mode=OneWay}" 
+                 VerticalScrollBarVisibility="Visible" 
+                 Margin="10"/>
     </Grid>
 </Window>
