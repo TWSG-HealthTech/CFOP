@@ -1,0 +1,3 @@
+- Follow instruction at https://developers.google.com/google-apps/calendar/quickstart/dotnet to create client secret json file
+- Download client secret file and rename to client_secret_{user_name}.json and move to Secrets/ sub folder
+- Change "Copy to Output Directory" to always

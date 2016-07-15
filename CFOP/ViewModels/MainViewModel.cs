@@ -11,7 +11,7 @@ using Prism.Mvvm;
 
 namespace CFOP.ViewModels
 {
-    public class MainViewModel : BindableBase
+    public class MainViewModel : BindableBase, IDisposable
     {
         #region Properties
 
@@ -133,6 +133,7 @@ namespace CFOP.ViewModels
                     WriteLine("Please start speaking.");
                 }
 
+                IsIdle = !e.Recording;
                 WriteLine("");
             });
         }
@@ -169,5 +170,10 @@ namespace CFOP.ViewModels
             });
         }
         #endregion
+
+        public void Dispose()
+        {
+            _micClient?.Dispose();
+        }
     }
 }

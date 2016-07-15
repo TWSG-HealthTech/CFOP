@@ -90,7 +90,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="client_secret.json">
+    <None Include="README.md" />
+    <None Include="Secrets\client_secret_david.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />

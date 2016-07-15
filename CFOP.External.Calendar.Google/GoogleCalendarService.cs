@@ -15,15 +15,12 @@ namespace CFOP.External.Calendar.Google
 {
     public class GoogleCalendarService : IManageCalendarService
     {
-        static readonly string[] Scopes = { CalendarService.Scope.CalendarReadonly };
-        static readonly string ApplicationName = "CFOP";
-
         public IList<CalendarEvent> FindTodayScheduleFor(string userId)
         {
             var service = new CalendarService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = ReadUserCredential(),
-                ApplicationName = ApplicationName,
+                HttpClientInitializer = ReadUserCredential(userId),
+                ApplicationName = "CFOP",
             });
             
             var request = service.Events.List("primary");
@@ -59,18 +56,21 @@ namespace CFOP.External.Calendar.Google
             return start;
         }
 
-        private static UserCredential ReadUserCredential()
+        private static UserCredential ReadUserCredential(string userId)
         {
-            using (var stream = new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+            var secretFilePath = $"Secrets/client_secret_{userId.ToLower()}.json";
+            if(!File.Exists(secretFilePath)) throw new ArgumentException($"Google client secret file for {userId} not found");
+
+            using (var stream = new FileStream(secretFilePath, FileMode.Open, FileAccess.Read))
             {
-                var credPath = System.Environment.GetFolderPath(
-                    System.Environment.SpecialFolder.Personal);
+                var credPath = Environment.GetFolderPath(
+                    Environment.SpecialFolder.Personal);
 
                 credPath = Path.Combine(credPath, ".credentials/cfop.json");
 
                 return GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
-                    Scopes,
+                    new [] { CalendarService.Scope.CalendarReadonly },
                     "user",
                     CancellationToken.None,
                     new FileDataStore(credPath, true)).Result;
