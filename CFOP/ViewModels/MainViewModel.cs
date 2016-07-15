@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
+using CFOP.Service.AppointmentSchedule.DTO;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -37,6 +39,8 @@ namespace CFOP.ViewModels
             }
         }
 
+        public ObservableCollection<CalendarEvent> TodayEvents { get; } = new ObservableCollection<CalendarEvent>();
+
         private readonly IApplicationSettings _applicationSettings;
         private readonly IManageCalendarService _manageCalendarService;
         private MicrophoneRecognitionClient _micClient;
@@ -47,12 +51,27 @@ namespace CFOP.ViewModels
         {
             IsIdle = true;
             StartRecognitionCommand = new DelegateCommand(StartRecognition);
+            GetTodayScheduleCommand = new DelegateCommand(GetTodaySchedule);
 
             _applicationSettings = applicationSettings;
             _manageCalendarService = manageCalendarService;
         }
 
         #region Commands
+
+        public ICommand GetTodayScheduleCommand { get; private set; }
+
+        private void GetTodaySchedule()
+        {
+            IsIdle = false;
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                var events = _manageCalendarService.FindTodayScheduleFor("david");
+                TodayEvents.AddRange(events);
+
+                IsIdle = true;
+            });
+        }
 
         public ICommand StartRecognitionCommand { get; private set; }
 
@@ -108,6 +127,7 @@ namespace CFOP.ViewModels
             }
             else
             {
+                var events = _manageCalendarService.FindTodayScheduleFor("david");
                 WriteLine("********* Final n-BEST Results *********");
                 for (var i = 0; i < e.PhraseResponse.Results.Length; i++)
                 {

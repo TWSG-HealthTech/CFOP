@@ -5,24 +5,53 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CFOP"
         mc:Ignorable="d"
-        Title="CFOP" Height="350" Width="525">
+        Title="CFOP" Height="600" Width="1000">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
 
         <Button Grid.Row="0" 
+                Grid.Column="0"
                 Margin="10 5" 
                 IsEnabled="{Binding IsIdle}" 
                 Command="{Binding StartRecognitionCommand}">Start Recognition</Button>
 
         <TextBox Grid.Row="1" 
+                 Grid.Column="0"
                  HorizontalAlignment="Stretch" 
                  VerticalAlignment="Stretch" 
                  TextWrapping="Wrap" 
                  Text="{Binding Message,Mode=OneWay}" 
                  VerticalScrollBarVisibility="Visible" 
                  Margin="10"/>
+
+        <Button Grid.Row="0" 
+                Grid.Column="1"
+                Margin="10 5" 
+                IsEnabled="{Binding IsIdle}" 
+                Command="{Binding GetTodayScheduleCommand}">Get Today Schedule</Button>
+        
+        <DataGrid
+            Grid.Row="1"
+            Grid.Column="1"
+            AutoGenerateColumns="False"
+            CanUserReorderColumns="True" 
+            CanUserResizeColumns="True" 
+            CanUserResizeRows="False" 
+            CanUserSortColumns="False"
+            ItemsSource="{Binding TodayEvents,Mode=OneWay}"  
+            >
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="*" Header="Event" Binding="{Binding Name,Mode=OneWay}"></DataGridTextColumn>
+                <DataGridTextColumn Width="100" Header="Start" Binding="{Binding StartTime,Mode=OneWay}"></DataGridTextColumn>
+                <DataGridTextColumn Width="100" Header="End" Binding="{Binding EndTime,Mode=OneWay}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>

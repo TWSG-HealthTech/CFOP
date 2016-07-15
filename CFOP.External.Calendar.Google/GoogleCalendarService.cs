@@ -9,6 +9,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
+using Google.Apis.Util;
 using Google.Apis.Util.Store;
 
 namespace CFOP.External.Calendar.Google
@@ -22,12 +23,14 @@ namespace CFOP.External.Calendar.Google
                 HttpClientInitializer = ReadUserCredential(userId),
                 ApplicationName = "CFOP",
             });
-            
+
+            var now = DateTime.Now;
             var request = service.Events.List("primary");
-            request.TimeMin = DateTime.Now;
+            request.TimeMin = new DateTime(now.Year, now.Month, now.Day);
+            request.TimeMax = request.TimeMin.Value.AddDays(1);
             request.ShowDeleted = false;
             request.SingleEvents = true;
-            request.MaxResults = 10;
+            
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
             var events = request.Execute();
