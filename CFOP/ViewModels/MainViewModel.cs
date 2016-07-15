@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CFOP.Infrastructure.Settings;
@@ -51,7 +52,7 @@ namespace CFOP.ViewModels
         {
             IsIdle = true;
             StartRecognitionCommand = new DelegateCommand(StartRecognition);
-            GetTodayScheduleCommand = new DelegateCommand(GetTodaySchedule);
+            GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(GetTodaySchedule);
 
             _applicationSettings = applicationSettings;
             _manageCalendarService = manageCalendarService;
@@ -61,16 +62,15 @@ namespace CFOP.ViewModels
 
         public ICommand GetTodayScheduleCommand { get; private set; }
 
-        private void GetTodaySchedule()
+        private async Task GetTodaySchedule()
         {
             IsIdle = false;
-            Dispatcher.CurrentDispatcher.Invoke(() =>
-            {
-                var events = _manageCalendarService.FindTodayScheduleFor("david");
-                TodayEvents.AddRange(events);
+            TodayEvents.Clear();
 
-                IsIdle = true;
-            });
+            var events = await _manageCalendarService.FindTodayScheduleFor("david");
+            TodayEvents.AddRange(events);
+
+            IsIdle = true;
         }
 
         public ICommand StartRecognitionCommand { get; private set; }

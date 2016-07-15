@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
 using Google.Apis.Auth.OAuth2;
@@ -16,7 +17,7 @@ namespace CFOP.External.Calendar.Google
 {
     public class GoogleCalendarService : IManageCalendarService
     {
-        public IList<CalendarEvent> FindTodayScheduleFor(string userId)
+        public async Task<IList<CalendarEvent>> FindTodayScheduleFor(string userId)
         {
             var service = new CalendarService(new BaseClientService.Initializer()
             {
@@ -33,7 +34,7 @@ namespace CFOP.External.Calendar.Google
             
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
-            var events = request.Execute();
+            var events = await request.ExecuteAsync();
             var result = new List<CalendarEvent>();
 
             if (events.Items == null || events.Items.Count <= 0) return result;
