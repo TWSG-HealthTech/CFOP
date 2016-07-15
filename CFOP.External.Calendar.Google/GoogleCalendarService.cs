@@ -11,7 +11,6 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
-using Google.Apis.Util;
 using Google.Apis.Util.Store;
 
 namespace CFOP.External.Calendar.Google
@@ -26,28 +25,39 @@ namespace CFOP.External.Calendar.Google
                 ApplicationName = "CFOP",
             });
 
+            var calendarRequest = service.CalendarList.List();
+            var calendarList = await calendarRequest.ExecuteAsync();
+            return (await Task.WhenAll(
+                calendarList.Items
+                            .Select(entry => 
+                                    GetTodayEventsForCalendar(service, entry))))
+                            .SelectMany(e => e)
+                            .OrderBy(e => e.StartTime)
+                            .ToList();
+        }
+
+        private static async Task<IEnumerable<CalendarEvent>> GetTodayEventsForCalendar(CalendarService service, CalendarListEntry calendar)
+        {
             var now = DateTime.Now;
-            var request = service.Events.List("primary");
+            var request = service.Events.List(calendar.Id);
             request.TimeMin = new DateTime(now.Year, now.Month, now.Day);
             request.TimeMax = request.TimeMin.Value.AddDays(1);
             request.ShowDeleted = false;
             request.SingleEvents = true;
-            
+
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
             var events = await request.ExecuteAsync();
-            var result = new List<CalendarEvent>();
 
-            if (events.Items == null || events.Items.Count <= 0) return result;
 
-            result.AddRange(events.Items.Select(eventItem =>
+            if (events.Items == null || events.Items.Count <= 0) return new List<CalendarEvent>();
+
+            return events.Items.Select(eventItem =>
             {
                 var start = ExtractTime(eventItem.Start);
                 var end = ExtractTime(eventItem.End);
                 return new CalendarEvent(eventItem.Summary, start, end);
-            }));
-
-            return result;
+            });
         }
 
         private static DateTime ExtractTime(EventDateTime time)
