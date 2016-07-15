@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows.Threading;
+using CFOP.Infrastructure.Settings;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -35,14 +36,17 @@ namespace CFOP.ViewModels
             }
         }
 
+        private readonly IApplicationSettings _applicationSettings;
         private MicrophoneRecognitionClient _micClient;
 
         #endregion
 
-        public MainViewModel()
+        public MainViewModel(IApplicationSettings applicationSettings)
         {
             IsIdle = true;
             StartRecognitionCommand = new DelegateCommand(StartRecognition);
+
+            _applicationSettings = applicationSettings;
         }
 
         #region Commands
@@ -55,13 +59,13 @@ namespace CFOP.ViewModels
 
             WriteLine("--- Start speech recognition ---");
 
-            var subscriptionKey = ConfigurationManager.AppSettings["SubscriptionKey"];
+            var subscriptionKey = _applicationSettings.SubscriptionKey;
             _micClient = SpeechRecognitionServiceFactory.CreateMicrophoneClientWithIntent(
                 "en-US",
                 subscriptionKey,
                 subscriptionKey,
-                ConfigurationManager.AppSettings["LuisAppId"],
-                ConfigurationManager.AppSettings["LuisSubscriptionId"]);
+                _applicationSettings.LuisAppId,
+                _applicationSettings.LuisSubscriptionId);
 
             _micClient.OnIntent += OnIntentHandler;
             _micClient.OnResponseReceived += OnMicShortPhraseResponseReceivedHandler;
