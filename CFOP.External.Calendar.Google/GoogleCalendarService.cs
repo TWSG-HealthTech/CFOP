@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -49,15 +50,15 @@ namespace CFOP.External.Calendar.Google
             return result;
         }
 
-        private static string ExtractTime(EventDateTime time)
+        private static DateTime ExtractTime(EventDateTime time)
         {
-            var start = time.DateTime.ToString();
-            if (string.IsNullOrEmpty(start))
+            var start = time.DateTime;
+            if (!start.HasValue)
             {
-                start = time.Date;
+                start = DateTime.ParseExact(time.Date, "yyyy-MM-dd", new CultureInfo("en-US"));
             }
 
-            return start;
+            return start.Value;
         }
 
         private static UserCredential ReadUserCredential(string userId)

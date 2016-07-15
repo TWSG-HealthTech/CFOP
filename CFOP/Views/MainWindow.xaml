@@ -45,12 +45,13 @@
             CanUserResizeColumns="True" 
             CanUserResizeRows="False" 
             CanUserSortColumns="False"
+            Margin="10"
             ItemsSource="{Binding TodayEvents,Mode=OneWay}"  
             >
             <DataGrid.Columns>
                 <DataGridTextColumn Width="*" Header="Event" Binding="{Binding Name,Mode=OneWay}"></DataGridTextColumn>
-                <DataGridTextColumn Width="100" Header="Start" Binding="{Binding StartTime,Mode=OneWay}"></DataGridTextColumn>
-                <DataGridTextColumn Width="100" Header="End" Binding="{Binding EndTime,Mode=OneWay}"></DataGridTextColumn>
+                <DataGridTextColumn Width="100" Header="Start" Binding="{Binding StartTime,Mode=OneWay, StringFormat='T'}"></DataGridTextColumn>
+                <DataGridTextColumn Width="100" Header="End" Binding="{Binding EndTime,Mode=OneWay, StringFormat='T'}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

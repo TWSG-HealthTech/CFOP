@@ -4,7 +4,7 @@ namespace CFOP.Service.AppointmentSchedule.DTO
 {
     public class CalendarEvent
     {
-        public CalendarEvent(string name, string startTime, string endTime)
+        public CalendarEvent(string name, DateTime startTime, DateTime endTime)
         {
             Name = name;
             StartTime = startTime;
@@ -12,7 +12,7 @@ namespace CFOP.Service.AppointmentSchedule.DTO
         }
 
         public string Name { get; private set; }
-        public string StartTime { get; private set; }
-        public string EndTime { get; private set; }
+        public DateTime StartTime { get; private set; }
+        public DateTime EndTime { get; private set; }
     }
 }
