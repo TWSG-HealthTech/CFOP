@@ -126,9 +126,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CFOP.External.Calendar.Google\CFOP.External.Calendar.Google.csproj">
+      <Project>{031b2844-b23e-4803-80e0-82591a086e41}</Project>
+      <Name>CFOP.External.Calendar.Google</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CFOP.Infrastructure\CFOP.Infrastructure.csproj">
       <Project>{8b2a352b-a57b-4b9d-88f1-1b746070e1b2}</Project>
       <Name>CFOP.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CFOP.Service\CFOP.Service.csproj">
+      <Project>{5607e474-0048-4e9f-b1d8-fec492b6f35a}</Project>
+      <Name>CFOP.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

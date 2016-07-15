@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows.Threading;
 using CFOP.Infrastructure.Settings;
+using CFOP.Service.AppointmentSchedule;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -37,16 +38,18 @@ namespace CFOP.ViewModels
         }
 
         private readonly IApplicationSettings _applicationSettings;
+        private readonly IManageCalendarService _manageCalendarService;
         private MicrophoneRecognitionClient _micClient;
 
         #endregion
 
-        public MainViewModel(IApplicationSettings applicationSettings)
+        public MainViewModel(IApplicationSettings applicationSettings, IManageCalendarService manageCalendarService)
         {
             IsIdle = true;
             StartRecognitionCommand = new DelegateCommand(StartRecognition);
 
             _applicationSettings = applicationSettings;
+            _manageCalendarService = manageCalendarService;
         }
 
         #region Commands
