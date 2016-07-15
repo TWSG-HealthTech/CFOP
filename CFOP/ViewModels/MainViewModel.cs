@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Windows.Threading;
 using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
@@ -11,6 +10,8 @@ using CFOP.Service.AppointmentSchedule.DTO;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Prism.Commands;
 using Prism.Mvvm;
+using SKYPE4COMLib;
+using ICommand = System.Windows.Input.ICommand;
 
 namespace CFOP.ViewModels
 {
@@ -40,6 +41,18 @@ namespace CFOP.ViewModels
             }
         }
 
+        private string _skypeContact;
+        public string SkypeContact
+        {
+            get { return _skypeContact; }
+            set
+            {
+                _skypeContact = value;
+                OnPropertyChanged(() => SkypeContact);
+                (SkypeVideoCallCommand as DelegateCommand).RaiseCanExecuteChanged();
+            }
+        }
+
         public ObservableCollection<CalendarEvent> TodayEvents { get; } = new ObservableCollection<CalendarEvent>();
 
         private readonly IApplicationSettings _applicationSettings;
@@ -53,12 +66,40 @@ namespace CFOP.ViewModels
             IsIdle = true;
             StartRecognitionCommand = new DelegateCommand(StartRecognition);
             GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(GetTodaySchedule);
+            SkypeVideoCallCommand = new DelegateCommand(SkypeVideoCall, () => !string.IsNullOrWhiteSpace(SkypeContact));
 
             _applicationSettings = applicationSettings;
             _manageCalendarService = manageCalendarService;
         }
 
         #region Commands
+
+        public ICommand SkypeVideoCallCommand { get; private set; }
+
+        private void SkypeVideoCall()
+        {
+            var skype = new Skype();
+            skype.Attach(7, false);
+
+            //Log in to skype if not yet
+            if (!skype.Client.IsRunning)
+            {
+                skype.Client.Start(true, true);
+            }
+
+            skype.Attach(skype.Protocol);
+
+            skype.CallStatus += OnSkypeCallStatusChanged;
+            var call = skype.PlaceCall(SkypeContact);
+        }
+
+        private void OnSkypeCallStatusChanged(Call call, TCallStatus status)
+        {
+            if (status == TCallStatus.clsInProgress && call.PartnerHandle == SkypeContact)
+            {
+                call.StartVideoSend();
+            }
+        }
 
         public ICommand GetTodayScheduleCommand { get; private set; }
 
