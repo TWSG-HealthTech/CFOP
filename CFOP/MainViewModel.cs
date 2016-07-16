@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows.Threading;
 using CFOP.Infrastructure.Settings;
-using CFOP.Service.AppointmentSchedule;
-using CFOP.Service.AppointmentSchedule.DTO;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Prism.Commands;
 using Prism.Mvvm;
-using SKYPE4COMLib;
 using ICommand = System.Windows.Input.ICommand;
 
-namespace CFOP.ViewModels
+namespace CFOP
 {
     public class MainViewModel : BindableBase, IDisposable
     {
@@ -39,80 +32,22 @@ namespace CFOP.ViewModels
                 _message = value;
                 OnPropertyChanged(() => Message);
             }
-        }
+        }               
 
-        private string _skypeContact;
-        public string SkypeContact
-        {
-            get { return _skypeContact; }
-            set
-            {
-                _skypeContact = value;
-                OnPropertyChanged(() => SkypeContact);
-                (SkypeVideoCallCommand as DelegateCommand).RaiseCanExecuteChanged();
-            }
-        }
-
-        public ObservableCollection<CalendarEvent> TodayEvents { get; } = new ObservableCollection<CalendarEvent>();
-
-        private readonly IApplicationSettings _applicationSettings;
-        private readonly IManageCalendarService _manageCalendarService;
+        private readonly IApplicationSettings _applicationSettings;        
         private MicrophoneRecognitionClient _micClient;
 
         #endregion
 
-        public MainViewModel(IApplicationSettings applicationSettings, IManageCalendarService manageCalendarService)
+        public MainViewModel(IApplicationSettings applicationSettings)
         {
             IsIdle = true;
-            StartRecognitionCommand = new DelegateCommand(StartRecognition);
-            GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(GetTodaySchedule);
-            SkypeVideoCallCommand = new DelegateCommand(SkypeVideoCall, () => !string.IsNullOrWhiteSpace(SkypeContact));
+            StartRecognitionCommand = new DelegateCommand(StartRecognition);            
 
             _applicationSettings = applicationSettings;
-            _manageCalendarService = manageCalendarService;
         }
 
-        #region Commands
-
-        public ICommand SkypeVideoCallCommand { get; private set; }
-
-        private void SkypeVideoCall()
-        {
-            var skype = new Skype();
-            skype.Attach(7, false);
-
-            //Log in to skype if not yet
-            if (!skype.Client.IsRunning)
-            {
-                skype.Client.Start(true, true);
-            }
-
-            skype.Attach(skype.Protocol);
-
-            skype.CallStatus += OnSkypeCallStatusChanged;
-            var call = skype.PlaceCall(SkypeContact);
-        }
-
-        private void OnSkypeCallStatusChanged(Call call, TCallStatus status)
-        {
-            if (status == TCallStatus.clsInProgress && call.PartnerHandle == SkypeContact)
-            {
-                call.StartVideoSend();
-            }
-        }
-
-        public ICommand GetTodayScheduleCommand { get; private set; }
-
-        private async Task GetTodaySchedule()
-        {
-            IsIdle = false;
-            TodayEvents.Clear();
-
-            var events = await _manageCalendarService.FindTodayScheduleFor("david");
-            TodayEvents.AddRange(events);
-
-            IsIdle = true;
-        }
+        #region Commands               
 
         public ICommand StartRecognitionCommand { get; private set; }
 
@@ -167,8 +102,7 @@ namespace CFOP.ViewModels
                 WriteLine("No phrase response is available.");
             }
             else
-            {
-                var events = _manageCalendarService.FindTodayScheduleFor("david");
+            {                
                 WriteLine("********* Final n-BEST Results *********");
                 for (var i = 0; i < e.PhraseResponse.Results.Length; i++)
                 {

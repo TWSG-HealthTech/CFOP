@@ -1,0 +1,37 @@
+﻿<UserControl x:Class="CFOP.AppointmentSchedule.AppointmentScheduleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CFOP.AppointmentSchedule"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Button Grid.Row="0"                 
+                Margin="10 5" 
+                IsEnabled="{Binding IsIdle}" 
+                Command="{Binding GetTodayScheduleCommand}">Get Today Schedule</Button>
+
+        <DataGrid
+            Grid.Row="1"            
+            AutoGenerateColumns="False"
+            CanUserReorderColumns="True" 
+            CanUserResizeColumns="True" 
+            CanUserResizeRows="False" 
+            CanUserSortColumns="False"
+            Margin="10"
+            ItemsSource="{Binding TodayEvents,Mode=OneWay}"  
+            >
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="*" Header="Event" Binding="{Binding Name,Mode=OneWay}"></DataGridTextColumn>
+                <DataGridTextColumn Width="100" Header="Start" Binding="{Binding StartTime,Mode=OneWay, StringFormat='T'}"></DataGridTextColumn>
+                <DataGridTextColumn Width="100" Header="End" Binding="{Binding EndTime,Mode=OneWay, StringFormat='T'}"></DataGridTextColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -1,7 +1,6 @@
 ﻿using System.Windows;
-using CFOP.ViewModels;
 
-namespace CFOP.Views
+namespace CFOP
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
