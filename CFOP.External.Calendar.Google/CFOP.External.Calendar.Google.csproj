@@ -108,11 +108,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.md" />
-    <None Include="Secrets\client_secret_david.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Secrets\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
