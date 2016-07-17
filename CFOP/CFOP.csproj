@@ -107,6 +107,9 @@
     <Compile Include="AppointmentSchedule\AppointmentScheduleViewModel.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Common\RegionNames.cs" />
+    <Compile Include="Common\UI\BoolToResizeModeConverter.cs" />
+    <Compile Include="Common\UI\BoolToWindowStateConverter.cs" />
+    <Compile Include="Common\UI\BoolToWindowStyleConverter.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="VideoCall\VideoCallView.xaml.cs">
       <DependentUpon>VideoCallView.xaml</DependentUpon>

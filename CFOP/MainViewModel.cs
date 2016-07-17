@@ -12,6 +12,17 @@ namespace CFOP
     {
         #region Properties
 
+        private bool _isInFullScreen;
+        public bool IsInFullScreen
+        {
+            get { return _isInFullScreen; }
+            set
+            {
+                _isInFullScreen = value;
+                OnPropertyChanged(() => IsInFullScreen);
+            }
+        }
+
         private bool _isIdle;
         public bool IsIdle
         {
@@ -41,13 +52,34 @@ namespace CFOP
 
         public MainViewModel(IApplicationSettings applicationSettings)
         {
+            IsInFullScreen = false;
             IsIdle = true;
-            StartRecognitionCommand = new DelegateCommand(StartRecognition);            
+
+            ToggleFullScreenCommand = new DelegateCommand(ToggleFullScreen);
+            StartRecognitionCommand = new DelegateCommand(StartRecognition);
+            ExitFullScreenCommand = new DelegateCommand(ExitFullScreen);
 
             _applicationSettings = applicationSettings;
         }
 
-        #region Commands               
+        #region Commands    
+
+        public ICommand ExitFullScreenCommand { get; private set; }
+
+        private void ExitFullScreen()
+        {
+            if (IsInFullScreen)
+            {
+                ToggleFullScreen();    
+            }            
+        }
+
+        public ICommand ToggleFullScreenCommand { get; private set; }
+
+        private void ToggleFullScreen()
+        {
+            IsInFullScreen = !IsInFullScreen;
+        }
 
         public ICommand StartRecognitionCommand { get; private set; }
 

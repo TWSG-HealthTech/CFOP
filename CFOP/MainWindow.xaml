@@ -3,13 +3,36 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CFOP"
-        xmlns:prism="http://prismlibrary.com/"
-        xmlns:constants="clr-namespace:CFOP.Common"
-        mc:Ignorable="d"
+        xmlns:prism="http://prismlibrary.com/"        
+        xmlns:ui="clr-namespace:CFOP.Common.UI"
+        xmlns:common="clr-namespace:CFOP.Common"        
+        mc:Ignorable="d"        
         Title="CFOP" Height="600" Width="1000">
+    <Window.Resources>
+        <ui:BoolToWindowStyleConverter x:Key="BoolToWindowStyle" />
+        <ui:BoolToWindowStateConverter x:Key="BoolToWindowState" />
+        <ui:BoolToResizeModeConverter x:Key="BoolToResizeMode" />
+    </Window.Resources>
+
+    <Window.WindowStyle>
+        <Binding Path="IsInFullScreen" Converter="{StaticResource BoolToWindowStyle}"/>
+    </Window.WindowStyle>
+
+    <Window.WindowState>
+        <Binding Path="IsInFullScreen" Converter="{StaticResource BoolToWindowState}"/>
+    </Window.WindowState>
+    
+    <Window.ResizeMode>
+        <Binding Path="IsInFullScreen" Converter="{StaticResource BoolToResizeMode}"/>
+    </Window.ResizeMode>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Escape" Command="{Binding ExitFullScreenCommand}" />
+    </Window.InputBindings>
+    
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
@@ -23,15 +46,23 @@
             Grid.Row="0"             
             Grid.Column="0" 
             Grid.ColumnSpan="2"            
-            prism:RegionManager.RegionName="{x:Static constants:RegionNames.TopRegion}" />
+            prism:RegionManager.RegionName="{x:Static common:RegionNames.TopRegion}" />
 
         <Button Grid.Row="1" 
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HorizontalAlignment="Left"
+                Margin="10 5" 
+                Width="200"
+                Command="{Binding ToggleFullScreenCommand}">Toggle Full Screen</Button>
+
+        <Button Grid.Row="2" 
                 Grid.Column="0"
                 Margin="10 5" 
                 IsEnabled="{Binding IsIdle}" 
                 Command="{Binding StartRecognitionCommand}">Start Recognition</Button>
 
-        <TextBox Grid.Row="2" 
+        <TextBox Grid.Row="3" 
                  Grid.Column="0"
                  HorizontalAlignment="Stretch" 
                  VerticalAlignment="Stretch" 
@@ -41,9 +72,10 @@
                  Margin="10"/>
 
         <ContentControl 
-            Grid.Row="1" 
+            Grid.Row="2" 
             Grid.RowSpan="2" 
             Grid.Column="1" 
-            prism:RegionManager.RegionName="{x:Static constants:RegionNames.SideRegion}" />
+            prism:RegionManager.RegionName="{x:Static common:RegionNames.SideRegion}" />
     </Grid>
 </Window>
+

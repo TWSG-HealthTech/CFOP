@@ -11,7 +11,7 @@ namespace CFOP
         {
             InitializeComponent();
 
-            DataContext = viewModel;
+            DataContext = viewModel;            
         }
     }
 }
