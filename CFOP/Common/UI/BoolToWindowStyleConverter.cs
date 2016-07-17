@@ -19,7 +19,12 @@ namespace CFOP.Common.UI
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            return (WindowStyle)value == WindowStyle.ToolWindow;
         }
     }
 }
