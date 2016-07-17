@@ -27,7 +27,7 @@ regionManager.RegisterViewWithRegion(RegionNames.TopRegion, typeof(VideoCallView
 
 ### Speech Recognition
 
-To get speech recognition to work, you will need to add in your keys to the AppSettings.secret.config file.  The file should look similar to the following:
+- To get speech recognition to work, you will need to add in your keys to the AppSettings.secret.config file.  The file should look similar to the following:
 ```
 <?xml version="1.0" encoding="utf-8" ?>
 <appSettings>
@@ -37,3 +37,8 @@ To get speech recognition to work, you will need to add in your keys to the AppS
   <add key="luisSubscriptionId" value="???"/>
 </appSettings>
 ```
+
+- Download and install Microsoft Speech Runtime 11 http://go.microsoft.com/fwlink/?LinkID=223568&clcid=0x409
+- Download and install one or many Runtime Languages: https://www.microsoft.com/en-us/download/details.aspx?id=27224
+    (One language runtime includes one SR and one TTS file)
+- Open regedit, navigate to `HKEY_CURRENT_USER\Software\Microsoft\Speech`, right click `CurrentUserLexicon` choose `Permissions`. If there is an entry for `ALL APPLICATION PACKAGES`, remove it
