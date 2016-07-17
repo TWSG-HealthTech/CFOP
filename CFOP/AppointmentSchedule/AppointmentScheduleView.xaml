@@ -9,6 +9,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
@@ -17,8 +18,14 @@
                 IsEnabled="{Binding IsIdle}" 
                 Command="{Binding GetTodayScheduleCommand}">Get Today Schedule</Button>
 
+        <TextBox Grid.Row="1"
+                 Margin="10 5"
+                 VerticalContentAlignment="Center"
+                 Text="{Binding UserId, UpdateSourceTrigger=PropertyChanged}">
+        </TextBox>
+        
         <DataGrid
-            Grid.Row="1"            
+            Grid.Row="2"            
             AutoGenerateColumns="False"
             CanUserReorderColumns="True" 
             CanUserResizeColumns="True" 
