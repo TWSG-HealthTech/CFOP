@@ -34,7 +34,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="40"></RowDefinition>
-            <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -56,24 +55,19 @@
                 Width="200"
                 Command="{Binding ToggleFullScreenCommand}">Toggle Full Screen</Button>
 
-        <Button Grid.Row="2" 
-                Grid.Column="0"
-                Margin="10 5" 
-                IsEnabled="{Binding IsIdle}" 
-                Command="{Binding StartRecognitionCommand}">Start Recognition</Button>
-
-        <TextBox Grid.Row="3" 
+        <TextBox Grid.Row="2" 
                  Grid.Column="0"
                  HorizontalAlignment="Stretch" 
                  VerticalAlignment="Stretch" 
                  TextWrapping="Wrap" 
                  Text="{Binding Message,Mode=OneWay}" 
                  VerticalScrollBarVisibility="Visible" 
-                 Margin="10"/>
+                 Margin="10"
+                 IsReadOnly="True"
+                 />
 
         <ContentControl 
-            Grid.Row="2" 
-            Grid.RowSpan="2" 
+            Grid.Row="2"
             Grid.Column="1" 
             prism:RegionManager.RegionName="{x:Static common:RegionNames.SideRegion}" />
     </Grid>

@@ -23,4 +23,17 @@ regsvr32.exe Skype4COM.dll
 regionManager.RegisterViewWithRegion(RegionNames.TopRegion, typeof(VideoCallView));
 ```
 
-- ViewModel is injected into View by constructor injection and need to be assigned manually to View `DataContext` for data binding. Autofac container is configured in `Bootstrapper.ConfigureContainerBuilder()` 
+- ViewModel is injected into View by constructor injection and need to be assigned manually to View `DataContext` for data binding. Autofac container is configured in `Bootstrapper.ConfigureContainerBuilder()`
+
+### Speech Recognition
+
+To get speech recognition to work, you will need to add in your keys to the AppSettings.secret.config file.  The file should look similar to the following:
+```
+<?xml version="1.0" encoding="utf-8" ?>
+<appSettings>
+  <add key="primaryKey" value="???"/>
+  <add key="secondaryKey" value="???"/>
+  <add key="luisAppId" value="???"/>
+  <add key="luisSubscriptionId" value="???"/>
+</appSettings>
+```
