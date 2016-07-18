@@ -1,0 +1,418 @@
+{
+  "luis_schema_version": "1.3.0",
+  "name": "Test",
+  "desc": "",
+  "culture": "en-us",
+  "intents": [
+    {
+      "name": "None"
+    },
+    {
+      "name": "TellJoke"
+    },
+    {
+      "name": "BuyStuff"
+    }
+  ],
+  "entities": [
+    {
+      "name": "Item"
+    }
+  ],
+  "composites": [],
+  "bing_entities": [],
+  "actions": [
+    {
+      "actionName": "BuyStuff",
+      "intentName": "BuyStuff",
+      "actionParameters": [
+        {
+          "parameterName": "thing",
+          "entityName": "Item",
+          "required": true
+        }
+      ]
+    },
+    {
+      "actionName": "TellJoke",
+      "intentName": "TellJoke",
+      "actionParameters": []
+    }
+  ],
+  "model_features": [],
+  "regex_features": [],
+  "utterances": [
+    {
+      "text": "get sushi",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "get some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "get some burger king",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "find some pizza",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "brenda get me some bread",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "brenda",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "prenda buy some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "buy some pizza",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "chicken rice",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 0,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "some chocolate",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "brenda buy some pizza",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "how can i help",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "get me some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "please get some burgers",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "brenda text george is calendar",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "tell me a joke",
+      "intent": "TellJoke",
+      "entities": []
+    },
+    {
+      "text": "say something funny",
+      "intent": "TellJoke",
+      "entities": []
+    },
+    {
+      "text": "make me laugh",
+      "intent": "TellJoke",
+      "entities": []
+    },
+    {
+      "text": "cheer me up",
+      "intent": "TellJoke",
+      "entities": []
+    },
+    {
+      "text": "buy some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "double double",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
+    },
+    {
+      "text": "brenda tell me a joke",
+      "intent": "TellJoke",
+      "entities": []
+    },
+    {
+      "text": "brenda buy some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "go away i'm busy",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "brenda buy some milk friend",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "brenda buy something to jeffrey",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "buy something for jeffrey",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "brenda buy some sugar",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "brenda buy some tea",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "brenda by diabetes kit",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "eat some chocolate",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "add milk to your shopping linda bisenti",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "brenda get some chocolate bar",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "i teach your shopping center buy some chocolate",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 7,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "shocking brenda",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "brenda it's a milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 5,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "brenda buy some milk 2017",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "brenda you're a fucking moron",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "brenda sing eye of the tiger",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "does button shapes brenda buy me some sugar",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 7,
+          "endPos": 7
+        }
+      ]
+    },
+    {
+      "text": "brenda by a band aid",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 4
+        }
+      ]
+    }
+  ]
+}
