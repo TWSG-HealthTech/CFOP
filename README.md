@@ -15,8 +15,7 @@ Skype4COM.dll is also included in installation of Skype at `C:\Program Files (x8
 ### To integrate with Google calendar
 
 - Follow instruction at https://developers.google.com/google-apps/calendar/quickstart/dotnet to create client secret json file
-- Download client secret file and rename to client_secret_{user_name}.json and move to Secrets/ sub folder in `CFOP.External.Calendar.Google` project
-- Change "Copy to Output Directory" to always
+- Download client secret file and rename to client_secret_demo.json and move to Secrets/ sub folder in `CFOP.External.Calendar.Google` project (don't include it in VS solution so that it's not checked in)
 
 ### Code Structure
 

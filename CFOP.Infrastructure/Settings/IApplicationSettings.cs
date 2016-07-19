@@ -2,7 +2,9 @@
 {
     public interface IApplicationSettings
     {
-        string SubscriptionKey { get; }
+        string Locale { get; }
+        string PrimaryKey { get; }
+        string SecondaryKey { get; }
         string LuisAppId { get; }
         string LuisSubscriptionId { get; }
     }

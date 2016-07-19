@@ -2,7 +2,6 @@
 using System.Windows.Threading;
 using CFOP.Infrastructure.Settings;
 using CFOP.Speech;
-using Microsoft.ProjectOxford.SpeechRecognition;
 using Prism.Commands;
 using Prism.Mvvm;
 using ICommand = System.Windows.Input.ICommand;
@@ -24,17 +23,6 @@ namespace CFOP
             }
         }
 
-        private bool _isIdle;
-        public bool IsIdle
-        {
-            get { return _isIdle; }
-            private set
-            {
-                _isIdle = value;
-                OnPropertyChanged(() => IsIdle);
-            }
-        }
-
         private string _message;
         public string Message
         {
@@ -45,9 +33,7 @@ namespace CFOP
                 OnPropertyChanged(() => Message);
             }
         }               
-
-        private readonly IApplicationSettings _applicationSettings;        
-        private MicrophoneRecognitionClient _micClient;
+        
         private SpeechWorker _speechWorker;
 
         #endregion
@@ -55,13 +41,11 @@ namespace CFOP
         public MainViewModel(IApplicationSettings applicationSettings)
         {
             IsInFullScreen = false;
-            IsIdle = true;
 
             ToggleFullScreenCommand = new DelegateCommand(ToggleFullScreen);
             ExitFullScreenCommand = new DelegateCommand(ExitFullScreen);
-
-            _applicationSettings = applicationSettings;
-            _speechWorker = new SpeechWorker();
+            
+            _speechWorker = new SpeechWorker(applicationSettings);
             _speechWorker.Write += WriteLine;
             _speechWorker.Start();
         }
@@ -101,7 +85,7 @@ namespace CFOP
 
         public void Dispose()
         {
-            _micClient?.Dispose();
+            _speechWorker.Dispose();
         }
     }
 }

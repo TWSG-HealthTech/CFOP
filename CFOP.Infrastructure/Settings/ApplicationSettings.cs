@@ -4,8 +4,10 @@ namespace CFOP.Infrastructure.Settings
 {
     public class ApplicationSettings : IApplicationSettings
     {
-        public string SubscriptionKey { get; } = ConfigurationManager.AppSettings["SubscriptionKey"];
-        public string LuisAppId { get; } = ConfigurationManager.AppSettings["LuisAppId"];
-        public string LuisSubscriptionId { get; } = ConfigurationManager.AppSettings["LuisSubscriptionId"];
+        public string Locale { get; } = ConfigurationManager.AppSettings["locale"];
+        public string PrimaryKey { get; } = ConfigurationManager.AppSettings["primaryKey"];
+        public string SecondaryKey { get; } = ConfigurationManager.AppSettings["secondaryKey"];
+        public string LuisAppId { get; } = ConfigurationManager.AppSettings["luisAppId"];
+        public string LuisSubscriptionId { get; } = ConfigurationManager.AppSettings["luisSubscriptionId"];
     }
 }

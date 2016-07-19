@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Configuration;
 using System.Globalization;
 using CFOP.Common;
+using CFOP.Infrastructure.Settings;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
 using Microsoft.Speech.Synthesis;
@@ -9,8 +9,9 @@ using Newtonsoft.Json;
 
 namespace CFOP.Speech
 {
-    class SpeechWorker
+    class SpeechWorker : IDisposable
     {
+        private readonly IApplicationSettings _applicationSettings;
         private SpeechSynthesizer _ss = new SpeechSynthesizer();
         private SpeechRecognitionEngine _sre;
         private bool _done = false;
@@ -18,13 +19,18 @@ namespace CFOP.Speech
 
         public event Action<string> Write;
 
+        public SpeechWorker(IApplicationSettings applicationSettings)
+        {
+            _applicationSettings = applicationSettings;
+        }
+
         public void Start()
         {
             SetupActiveListener();
             _ss.SetOutputToDefaultAudioDevice();
             Write("(Speaking: I am awake)");
             _ss.Speak("I am awake");
-            CultureInfo ci = new CultureInfo(ConfigurationManager.AppSettings["locale"]);
+            CultureInfo ci = new CultureInfo(_applicationSettings.Locale);
             _sre = new SpeechRecognitionEngine(ci);
             _sre.SetInputToDefaultAudioDevice();
             _sre.SpeechRecognized += sre_SpeechRecognized;
@@ -42,11 +48,11 @@ namespace CFOP.Speech
         private void SetupActiveListener()
         {
             _microphoneClient = SpeechRecognitionServiceFactory.CreateMicrophoneClientWithIntent(
-                ConfigurationManager.AppSettings["locale"],
-                ConfigurationManager.AppSettings["primaryKey"],
-                ConfigurationManager.AppSettings["secondaryKey"],
-                ConfigurationManager.AppSettings["luisAppId"],
-                ConfigurationManager.AppSettings["luisSubscriptionId"]
+                _applicationSettings.Locale,
+                _applicationSettings.PrimaryKey,
+                _applicationSettings.SecondaryKey,
+                _applicationSettings.LuisAppId,
+                _applicationSettings.LuisSubscriptionId
             );
 
             // Event handlers for speech recognition results
@@ -176,6 +182,11 @@ namespace CFOP.Speech
 
             _sre.SetInputToDefaultAudioDevice();
             _sre.RecognizeAsync(RecognizeMode.Multiple);
+        }
+
+        public void Dispose()
+        {
+            _microphoneClient.Dispose();
         }
     }
 }
