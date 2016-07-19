@@ -3,8 +3,10 @@ using Autofac;
 using CFOP.AppointmentSchedule;
 using CFOP.Common;
 using CFOP.External.Calendar.Google;
+using CFOP.External.Video.Skype;
 using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
+using CFOP.Service.VideoCall;
 using CFOP.VideoCall;
 using Prism.Autofac;
 using Prism.Mvvm;
@@ -41,6 +43,7 @@ namespace CFOP
 
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
             builder.RegisterType<GoogleCalendarService>().As<IManageCalendarService>();
+            builder.RegisterType<Skype4COMVideoService>().As<IVideoService>();
 
             ViewModelLocationProvider.SetDefaultViewModelFactory(type => Container.Resolve(type));
         }        

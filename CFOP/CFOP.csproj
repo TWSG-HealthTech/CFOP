@@ -186,6 +186,10 @@
       <Project>{031b2844-b23e-4803-80e0-82591a086e41}</Project>
       <Name>CFOP.External.Calendar.Google</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CFOP.External.Video.Skype\CFOP.External.Video.Skype.csproj">
+      <Project>{83E159CD-C362-4565-8633-E48B5DE3E7B1}</Project>
+      <Name>CFOP.External.Video.Skype</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CFOP.Infrastructure\CFOP.Infrastructure.csproj">
       <Project>{8b2a352b-a57b-4b9d-88f1-1b746070e1b2}</Project>
       <Name>CFOP.Infrastructure</Name>
@@ -194,17 +198,6 @@
       <Project>{5607e474-0048-4e9f-b1d8-fec492b6f35a}</Project>
       <Name>CFOP.Service</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="SKYPE4COMLib">
-      <Guid>{03282B5D-B38F-469D-849A-09B0A7F4881B}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

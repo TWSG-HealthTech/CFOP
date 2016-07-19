@@ -9,10 +9,10 @@
     <StackPanel Orientation="Horizontal">
         <Button Margin="10 5"
                     Padding="10 0"
-                    Command="{Binding SkypeVideoCallCommand,Mode=OneWay}">Skype Video Call To</Button>
+                    Command="{Binding VideoCallCommand,Mode=OneWay}">Video Call To</Button>
         <TextBox Margin="10 5"
                      VerticalContentAlignment="Center"
-                     Text="{Binding SkypeContact,UpdateSourceTrigger=PropertyChanged}"
+                     Text="{Binding Contact,UpdateSourceTrigger=PropertyChanged}"
                      Width="200"></TextBox>
     </StackPanel>
 </UserControl>
