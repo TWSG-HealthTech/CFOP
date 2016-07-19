@@ -10,6 +10,8 @@
 regsvr32.exe Skype4COM.dll
 ```
 
+Skype4COM.dll is also included in installation of Skype at `C:\Program Files (x86)\Common Files\Skype`
+
 ### To integrate with Google calendar
 
 - Follow instruction at https://developers.google.com/google-apps/calendar/quickstart/dotnet to create client secret json file
