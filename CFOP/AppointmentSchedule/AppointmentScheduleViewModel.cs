@@ -1,6 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Threading;
+using CFOP.Common;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
 using Prism.Commands;
@@ -42,12 +46,22 @@ namespace CFOP.AppointmentSchedule
 
         public AppointmentScheduleViewModel(IManageCalendarService manageCalendarService)
         {
+
             IsIdle = true;
-            UserId = "david";
+            UserId = "demo";
 
             GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(GetTodaySchedule, () => !string.IsNullOrWhiteSpace(UserId));
 
             _manageCalendarService = manageCalendarService;
+
+            BindingOperations.EnableCollectionSynchronization(TodayEvents, new object());
+
+            CommandCentre.ShowCalendarCommand += ShowCalendar;
+        }
+
+        private void ShowCalendar(DateTime day)
+        {
+            GetTodaySchedule();
         }
 
         #region Commands

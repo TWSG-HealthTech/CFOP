@@ -118,6 +118,7 @@
     </Compile>
     <Compile Include="AppointmentSchedule\AppointmentScheduleViewModel.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Common\CommandCentre.cs" />
     <Compile Include="Common\RegionNames.cs" />
     <Compile Include="Common\UI\BoolToResizeModeConverter.cs" />
     <Compile Include="Common\UI\BoolToWindowStateConverter.cs" />

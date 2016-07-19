@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Globalization;
+using CFOP.Common;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
 using Microsoft.Speech.Synthesis;
@@ -15,7 +16,7 @@ namespace CFOP.Speech
         private bool _done = false;
         private MicrophoneRecognitionClient _microphoneClient;
 
-        public event Action<string> Write; 
+        public event Action<string> Write;
 
         public void Start()
         {
@@ -122,6 +123,12 @@ namespace CFOP.Speech
             else if (intent["intent"] == "BuyStuff" && intent["actions"][0]["triggered"].Value)
             {
                 _ss.Speak($"OK, I'll add {intent["actions"][0]["parameters"][0]["value"][0]["entity"]} to your shopping!");
+            }
+            else if (intent["intent"] == "ShowCalendar" && intent["actions"][0]["triggered"].Value)
+            {
+                _ss.Speak("Here is todays schedule");
+                var day = DateTime.Today;
+                CommandCentre.ShowCalendar(day);
             }
             else
             {

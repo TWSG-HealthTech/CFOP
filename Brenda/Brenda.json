@@ -11,6 +11,9 @@
       "name": "TellJoke"
     },
     {
+      "name": "ShowCalendar"
+    },
+    {
       "name": "BuyStuff"
     }
   ],
@@ -20,7 +23,9 @@
     }
   ],
   "composites": [],
-  "bing_entities": [],
+  "bing_entities": [
+    "datetime"
+  ],
   "actions": [
     {
       "actionName": "BuyStuff",
@@ -37,6 +42,17 @@
       "actionName": "TellJoke",
       "intentName": "TellJoke",
       "actionParameters": []
+    },
+    {
+      "actionName": "ShowCalendar",
+      "intentName": "ShowCalendar",
+      "actionParameters": [
+        {
+          "parameterName": "Day",
+          "entityName": "datetime",
+          "required": false
+        }
+      ]
     }
   ],
   "model_features": [],
@@ -413,6 +429,213 @@
           "endPos": 4
         }
       ]
+    },
+    {
+      "text": "linda tell me a joke",
+      "intent": "TellJoke",
+      "entities": []
+    },
+    {
+      "text": "go shopping to buy some tea",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 5,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "yeah some friend of fire",
+      "intent": "None",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "play some pizza",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "brenda find some account",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "what am i doing today",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "show me my calendar",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "what am i up to",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "what's on my schedule",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "what is on my schedule tomorrow",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "what is on tomorrow's calendar",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "show me my schedule",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "when are young adults",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "brenda show me my schedule",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "brenda buy some confusion",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "windows button sugar",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "tell a joke",
+      "intent": "TellJoke",
+      "entities": []
+    },
+    {
+      "text": "yes brenda buy some chocolate",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "what's on my calendar",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "brenda buy some lego",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "brenda buy me some tea",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "buy some chocolate",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "brenda buy some chocolate",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "brenda buy some cheese",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "go shopping to buy some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 5,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "i doing tomorrow brenda",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "brenda bicentenario",
+      "intent": "None",
+      "entities": []
     }
   ]
 }
