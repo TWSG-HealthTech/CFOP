@@ -1,4 +1,5 @@
-﻿using CFOP.Service.VideoCall;
+﻿using System.Diagnostics;
+using CFOP.Service.VideoCall;
 using Prism.Commands;
 using Prism.Mvvm;
 
@@ -48,8 +49,8 @@ namespace CFOP.VideoCall
         private void VideoCall()
         {
             //IsInCall = true;
-
-            _videoService.Call(Contact);
+            var skypeProcess = Process.Start($"skype:{Contact}?call&video=true");
+            //_videoService.Call(Contact);
         }
 
         #endregion
