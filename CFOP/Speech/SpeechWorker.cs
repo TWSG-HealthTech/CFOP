@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using CFOP.Infrastructure.Settings;
+using CFOP.VideoCall;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
 using Microsoft.Speech.Synthesis;
@@ -122,25 +123,41 @@ namespace CFOP.Speech
         private void HandlePayload(string payload)
         {
             dynamic x = JsonConvert.DeserializeObject(payload);
-            dynamic intent = x["intents"][0];
-            if (intent["intent"] == "TellJoke")
+            dynamic intent = x.intents[0];
+            dynamic intentName = intent.intent;
+            if (intentName == "TellJoke")
             {
                 _ss.Speak("What wobbles in the sky? A jellycopter!");
             }
-            else if (intent["intent"] == "BuyStuff" && intent["actions"][0]["triggered"].Value)
+            else if (intentName == "BuyStuff" && IsFirstIntentTriggered(intent))
             {
-                _ss.Speak($"OK, I'll add {intent["actions"][0]["parameters"][0]["value"][0]["entity"]} to your shopping!");
+                _ss.Speak($"OK, I'll add {GetFirstIntentActionParameter(intent)} to your shopping!");
             }
-            else if (intent["intent"] == "ShowCalendar" && intent["actions"][0]["triggered"].Value)
+            else if (intentName == "ShowCalendar" && IsFirstIntentTriggered(intent))
             {
                 _ss.Speak("Here is todays schedule");
                 var day = DateTime.Today;
                 _eventAggregator.GetEvent<ShowCalendarInvoked>().Publish(day);
             }
+            else if (intentName == "CallVideo" && IsFirstIntentTriggered(intent))
+            {
+                var person = GetFirstIntentActionParameter(intent);
+                _eventAggregator.GetEvent<CallVideoInvoked>().Publish(person);
+            }
             else
             {
                 _ss.Speak("Sorry, I don't know how to do that.");
             }
+        }
+
+        private string GetFirstIntentActionParameter(dynamic intent)
+        {
+            return intent.actions[0].parameters[0].value[0].entity;
+        }
+
+        private bool IsFirstIntentTriggered(dynamic intent)
+        {
+            return intent.actions[0].triggered.Value;
         }
 
         private void OnConversationErrorHandler(object sender, SpeechErrorEventArgs e)

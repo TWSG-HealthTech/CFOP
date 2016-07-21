@@ -5,21 +5,27 @@
   "culture": "en-us",
   "intents": [
     {
-      "name": "None"
+      "name": "CallVideo"
     },
     {
-      "name": "TellJoke"
+      "name": "BuyStuff"
     },
     {
       "name": "ShowCalendar"
     },
     {
-      "name": "BuyStuff"
+      "name": "None"
+    },
+    {
+      "name": "TellJoke"
     }
   ],
   "entities": [
     {
       "name": "Item"
+    },
+    {
+      "name": "Person"
     }
   ],
   "composites": [],
@@ -27,6 +33,17 @@
     "datetime"
   ],
   "actions": [
+    {
+      "actionName": "ShowCalendar",
+      "intentName": "ShowCalendar",
+      "actionParameters": [
+        {
+          "parameterName": "Day",
+          "entityName": "datetime",
+          "required": false
+        }
+      ]
+    },
     {
       "actionName": "BuyStuff",
       "intentName": "BuyStuff",
@@ -44,12 +61,12 @@
       "actionParameters": []
     },
     {
-      "actionName": "ShowCalendar",
-      "intentName": "ShowCalendar",
+      "actionName": "CallVideo",
+      "intentName": "CallVideo",
       "actionParameters": [
         {
-          "parameterName": "Day",
-          "entityName": "datetime",
+          "parameterName": "person",
+          "entityName": "Person",
           "required": false
         }
       ]
@@ -66,17 +83,6 @@
           "entity": "Item",
           "startPos": 1,
           "endPos": 1
-        }
-      ]
-    },
-    {
-      "text": "get some milk",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 2,
-          "endPos": 2
         }
       ]
     },
@@ -103,33 +109,6 @@
       ]
     },
     {
-      "text": "brenda get me some bread",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 4,
-          "endPos": 4
-        }
-      ]
-    },
-    {
-      "text": "brenda",
-      "intent": "None",
-      "entities": []
-    },
-    {
-      "text": "prenda buy some milk",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 3,
-          "endPos": 3
-        }
-      ]
-    },
-    {
       "text": "buy some pizza",
       "intent": "BuyStuff",
       "entities": [
@@ -152,13 +131,18 @@
       ]
     },
     {
-      "text": "some chocolate",
+      "text": "how can i help",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "please get some burgers",
       "intent": "BuyStuff",
       "entities": [
         {
           "entity": "Item",
-          "startPos": 1,
-          "endPos": 1
+          "startPos": 3,
+          "endPos": 3
         }
       ]
     },
@@ -174,7 +158,56 @@
       ]
     },
     {
-      "text": "how can i help",
+      "text": "prenda buy some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "some chocolate",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 1,
+          "endPos": 1
+        }
+      ]
+    },
+    {
+      "text": "get some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "brenda get me some bread",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "brenda",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "brenda text george is calendar",
       "intent": "None",
       "entities": []
     },
@@ -190,28 +223,7 @@
       ]
     },
     {
-      "text": "please get some burgers",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 3,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "brenda text george is calendar",
-      "intent": "None",
-      "entities": []
-    },
-    {
       "text": "tell me a joke",
-      "intent": "TellJoke",
-      "entities": []
-    },
-    {
-      "text": "say something funny",
       "intent": "TellJoke",
       "entities": []
     },
@@ -221,20 +233,9 @@
       "entities": []
     },
     {
-      "text": "cheer me up",
+      "text": "say something funny",
       "intent": "TellJoke",
       "entities": []
-    },
-    {
-      "text": "buy some milk",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 2,
-          "endPos": 2
-        }
-      ]
     },
     {
       "text": "double double",
@@ -242,15 +243,9 @@
       "entities": []
     },
     {
-      "text": "milk",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 0,
-          "endPos": 0
-        }
-      ]
+      "text": "cheer me up",
+      "intent": "TellJoke",
+      "entities": []
     },
     {
       "text": "brenda tell me a joke",
@@ -295,18 +290,29 @@
       "entities": []
     },
     {
-      "text": "brenda buy some sugar",
+      "text": "milk",
       "intent": "BuyStuff",
       "entities": [
         {
           "entity": "Item",
-          "startPos": 3,
-          "endPos": 3
+          "startPos": 0,
+          "endPos": 0
         }
       ]
     },
     {
-      "text": "brenda buy some tea",
+      "text": "buy some milk",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "brenda buy some sugar",
       "intent": "BuyStuff",
       "entities": [
         {
@@ -323,6 +329,17 @@
         {
           "entity": "Item",
           "startPos": 2,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "brenda buy some tea",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
           "endPos": 3
         }
       ]
@@ -404,11 +421,6 @@
       "entities": []
     },
     {
-      "text": "brenda sing eye of the tiger",
-      "intent": "None",
-      "entities": []
-    },
-    {
       "text": "does button shapes brenda buy me some sugar",
       "intent": "BuyStuff",
       "entities": [
@@ -418,6 +430,11 @@
           "endPos": 7
         }
       ]
+    },
+    {
+      "text": "brenda sing eye of the tiger",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "brenda by a band aid",
@@ -480,17 +497,7 @@
       ]
     },
     {
-      "text": "what am i doing today",
-      "intent": "ShowCalendar",
-      "entities": []
-    },
-    {
       "text": "show me my calendar",
-      "intent": "ShowCalendar",
-      "entities": []
-    },
-    {
-      "text": "what am i up to",
       "intent": "ShowCalendar",
       "entities": []
     },
@@ -510,51 +517,24 @@
       "entities": []
     },
     {
+      "text": "what am i doing today",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
       "text": "show me my schedule",
       "intent": "ShowCalendar",
       "entities": []
     },
     {
-      "text": "when are young adults",
-      "intent": "None",
-      "entities": []
-    },
-    {
-      "text": "brenda show me my schedule",
+      "text": "what am i up to",
       "intent": "ShowCalendar",
-      "entities": []
-    },
-    {
-      "text": "brenda buy some confusion",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 3,
-          "endPos": 3
-        }
-      ]
-    },
-    {
-      "text": "windows button sugar",
-      "intent": "None",
       "entities": []
     },
     {
       "text": "tell a joke",
       "intent": "TellJoke",
       "entities": []
-    },
-    {
-      "text": "yes brenda buy some chocolate",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 4,
-          "endPos": 4
-        }
-      ]
     },
     {
       "text": "what's on my calendar",
@@ -573,17 +553,6 @@
       ]
     },
     {
-      "text": "brenda buy me some tea",
-      "intent": "BuyStuff",
-      "entities": [
-        {
-          "entity": "Item",
-          "startPos": 4,
-          "endPos": 4
-        }
-      ]
-    },
-    {
       "text": "buy some chocolate",
       "intent": "BuyStuff",
       "entities": [
@@ -591,6 +560,17 @@
           "entity": "Item",
           "startPos": 2,
           "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "brenda buy me some tea",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 4,
+          "endPos": 4
         }
       ]
     },
@@ -628,14 +608,106 @@
       ]
     },
     {
+      "text": "brenda bicentenario",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i doing tomorrow brenda",
       "intent": "ShowCalendar",
       "entities": []
     },
     {
-      "text": "brenda bicentenario",
+      "text": "when are young adults",
       "intent": "None",
       "entities": []
+    },
+    {
+      "text": "brenda show me my schedule",
+      "intent": "ShowCalendar",
+      "entities": []
+    },
+    {
+      "text": "yes brenda buy some chocolate",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 4,
+          "endPos": 4
+        }
+      ]
+    },
+    {
+      "text": "windows button sugar",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "brenda buy some confusion",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "call my son",
+      "intent": "CallVideo",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "i want to see my daughter",
+      "intent": "CallVideo",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 5,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "i want to talk to my son",
+      "intent": "CallVideo",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 6,
+          "endPos": 6
+        }
+      ]
+    },
+    {
+      "text": "skype my daughter",
+      "intent": "CallVideo",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "brenda call my son",
+      "intent": "CallVideo",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
     }
   ]
 }

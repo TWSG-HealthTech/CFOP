@@ -125,6 +125,7 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Speech\ShowCalendarInvoked.cs" />
     <Compile Include="Speech\SpeechWorker.cs" />
+    <Compile Include="VideoCall\CallVideoInvoked.cs" />
     <Compile Include="VideoCall\VideoCallView.xaml.cs">
       <DependentUpon>VideoCallView.xaml</DependentUpon>
     </Compile>
