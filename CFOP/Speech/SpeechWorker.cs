@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Globalization;
-using CFOP.Common;
 using CFOP.Infrastructure.Settings;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
 using Microsoft.Speech.Synthesis;
 using Newtonsoft.Json;
+using Prism.Events;
 
 namespace CFOP.Speech
 {
     class SpeechWorker : IDisposable
     {
         private readonly IApplicationSettings _applicationSettings;
-        private SpeechSynthesizer _ss = new SpeechSynthesizer();
+        private readonly IEventAggregator _eventAggregator;
+        private readonly SpeechSynthesizer _ss = new SpeechSynthesizer();
         private SpeechRecognitionEngine _sre;
-        private bool _done = false;
         private MicrophoneRecognitionClient _microphoneClient;
 
         public event Action<string> Write;
 
-        public SpeechWorker(IApplicationSettings applicationSettings)
+        public SpeechWorker(IApplicationSettings applicationSettings, IEventAggregator eventAggregator)
         {
             _applicationSettings = applicationSettings;
+            _eventAggregator = eventAggregator;
         }
 
         public void Start()
@@ -33,15 +34,15 @@ namespace CFOP.Speech
             CultureInfo ci = new CultureInfo(_applicationSettings.Locale);
             _sre = new SpeechRecognitionEngine(ci);
             _sre.SetInputToDefaultAudioDevice();
-            _sre.SpeechRecognized += sre_SpeechRecognized;
-            Choices ch_WakeCommands = new Choices();
-            ch_WakeCommands.Add("See Fop");
-            ch_WakeCommands.Add("Jefrey");
-            ch_WakeCommands.Add("Brenda");
+            _sre.SpeechRecognized += OnSpeechRecognized;
+            Choices wakeCommands = new Choices();
+            wakeCommands.Add("See Fop");
+            wakeCommands.Add("Jefrey");
+            wakeCommands.Add("Brenda");
             GrammarBuilder gb_Wake = new GrammarBuilder();
-            gb_Wake.Append(ch_WakeCommands);
-            Grammar g_Wake = new Grammar(gb_Wake);
-            _sre.LoadGrammarAsync(g_Wake);
+            gb_Wake.Append(wakeCommands);
+            Grammar grammar = new Grammar(gb_Wake);
+            _sre.LoadGrammarAsync(grammar);
             _sre.RecognizeAsync(RecognizeMode.Multiple);
         }
 
@@ -65,7 +66,7 @@ namespace CFOP.Speech
             _microphoneClient.OnIntent += OnIntentHandler;
         }
 
-        void sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+        void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             string txt = e.Result.Text;
             float confidence = e.Result.Confidence;
@@ -118,7 +119,7 @@ namespace CFOP.Speech
             HandlePayload(e.Payload);
         }
 
-        private void HandlePayload(String payload)
+        private void HandlePayload(string payload)
         {
             dynamic x = JsonConvert.DeserializeObject(payload);
             dynamic intent = x["intents"][0];
@@ -134,7 +135,7 @@ namespace CFOP.Speech
             {
                 _ss.Speak("Here is todays schedule");
                 var day = DateTime.Today;
-                CommandCentre.ShowCalendar(day);
+                _eventAggregator.GetEvent<ShowCalendarInvoked>().Publish(day);
             }
             else
             {

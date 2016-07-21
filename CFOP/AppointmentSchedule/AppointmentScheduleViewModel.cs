@@ -7,7 +7,9 @@ using System.Windows.Threading;
 using CFOP.Common;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
+using CFOP.Speech;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 
 namespace CFOP.AppointmentSchedule
@@ -40,23 +42,26 @@ namespace CFOP.AppointmentSchedule
         }
 
         public ObservableCollection<CalendarEvent> TodayEvents { get; } = new ObservableCollection<CalendarEvent>();
+        private readonly IEventAggregator _eventAggregator;
         private readonly IManageCalendarService _manageCalendarService;
+        private SubscriptionToken _subscriptionToken;
 
         #endregion
 
-        public AppointmentScheduleViewModel(IManageCalendarService manageCalendarService)
+        public AppointmentScheduleViewModel(IEventAggregator eventAggregator, IManageCalendarService manageCalendarService)
         {
-
             IsIdle = true;
             UserId = "demo";
 
             GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(GetTodaySchedule, () => !string.IsNullOrWhiteSpace(UserId));
 
+            _eventAggregator = eventAggregator;
             _manageCalendarService = manageCalendarService;
 
             BindingOperations.EnableCollectionSynchronization(TodayEvents, new object());
 
-            CommandCentre.ShowCalendarCommand += ShowCalendar;
+            var showCalendarEvent = _eventAggregator.GetEvent<ShowCalendarInvoked>();
+            _subscriptionToken = showCalendarEvent.Subscribe(ShowCalendar);
         }
 
         private void ShowCalendar(DateTime day)

@@ -3,6 +3,7 @@ using System.Windows.Threading;
 using CFOP.Infrastructure.Settings;
 using CFOP.Speech;
 using Prism.Commands;
+using Prism.Events;
 using Prism.Mvvm;
 using ICommand = System.Windows.Input.ICommand;
 
@@ -34,18 +35,19 @@ namespace CFOP
             }
         }               
         
-        private SpeechWorker _speechWorker;
+        private readonly SpeechWorker _speechWorker;
 
         #endregion
 
-        public MainViewModel(IApplicationSettings applicationSettings)
+        public MainViewModel(IApplicationSettings applicationSettings, 
+            IEventAggregator eventAggregator)
         {
             IsInFullScreen = false;
 
             ToggleFullScreenCommand = new DelegateCommand(ToggleFullScreen);
             ExitFullScreenCommand = new DelegateCommand(ExitFullScreen);
             
-            _speechWorker = new SpeechWorker(applicationSettings);
+            _speechWorker = new SpeechWorker(applicationSettings, eventAggregator);
             _speechWorker.Write += WriteLine;
             _speechWorker.Start();
         }
