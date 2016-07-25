@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using CFOP.Infrastructure.Settings;
+using CFOP.Speech.Events;
 using CFOP.VideoCall;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
@@ -137,18 +138,23 @@ namespace CFOP.Speech
             {
                 _ss.Speak("Here is todays schedule");
                 var day = DateTime.Today;
-                _eventAggregator.GetEvent<ShowCalendarInvoked>().Publish(day);
+                Publish(new ShowCalendarEventParameters(day));
             }
             else if (intentName == "CallVideo" && IsFirstIntentTriggered(intent))
             {
                 _ss.Speak("Calling");
                 var person = GetFirstIntentActionParameter(intent);
-                _eventAggregator.GetEvent<CallVideoInvoked>().Publish(person);
+                Publish(new CallVideoEventParameters(person));
             }
             else
             {
                 _ss.Speak("Sorry, I don't know how to do that.");
             }
+        }
+
+        private void Publish<T>(T parameters)
+        {
+            _eventAggregator.GetEvent<VoiceCommandInvoked<T>>().Publish(parameters);
         }
 
         private string GetFirstIntentActionParameter(dynamic intent)

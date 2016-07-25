@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using CFOP.Service.Common;
 using CFOP.Service.VideoCall;
+using CFOP.Speech.Events;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -45,12 +46,12 @@ namespace CFOP.VideoCall
             VideoCallCommand = new DelegateCommand(VideoCall, 
                             () => !string.IsNullOrWhiteSpace(Contact) && !IsInCall);
 
-            evenAggregator.GetEvent<CallVideoInvoked>().Subscribe(VideoCall);
+            evenAggregator.GetEvent<VoiceCommandInvoked<CallVideoEventParameters>>().Subscribe(VideoCall);
         }
 
-        private void VideoCall(string userId)
+        private void VideoCall(CallVideoEventParameters parameters)
         {
-            var user = _manageUserService.LookUpUserByAlias(userId);
+            var user = _manageUserService.LookUpUserByAlias(parameters.User);
 
             if (user != null)
             {
@@ -66,7 +67,7 @@ namespace CFOP.VideoCall
 
         private void VideoCall()
         {
-            VideoCall(Contact);
+            VideoCall(new CallVideoEventParameters(Contact));
         }
 
         #endregion

@@ -2,12 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Threading;
-using CFOP.Common;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
-using CFOP.Speech;
+using CFOP.Speech.Events;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -60,11 +57,11 @@ namespace CFOP.AppointmentSchedule
 
             BindingOperations.EnableCollectionSynchronization(TodayEvents, new object());
 
-            var showCalendarEvent = _eventAggregator.GetEvent<ShowCalendarInvoked>();
+            var showCalendarEvent = _eventAggregator.GetEvent<VoiceCommandInvoked<ShowCalendarEventParameters>>();
             _subscriptionToken = showCalendarEvent.Subscribe(ShowCalendar);
         }
 
-        private void ShowCalendar(DateTime day)
+        private void ShowCalendar(ShowCalendarEventParameters parameters)
         {
             GetTodaySchedule();
         }

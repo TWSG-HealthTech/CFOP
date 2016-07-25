@@ -123,9 +123,10 @@
     <Compile Include="Common\UI\BoolToWindowStateConverter.cs" />
     <Compile Include="Common\UI\BoolToWindowStyleConverter.cs" />
     <Compile Include="MainViewModel.cs" />
-    <Compile Include="Speech\ShowCalendarInvoked.cs" />
+    <Compile Include="Speech\Events\ShowCalendarEventParameters.cs" />
     <Compile Include="Speech\SpeechWorker.cs" />
-    <Compile Include="VideoCall\CallVideoInvoked.cs" />
+    <Compile Include="Speech\Events\VoiceCommandInvoked.cs" />
+    <Compile Include="Speech\Events\CallVideoEventParameters.cs" />
     <Compile Include="VideoCall\VideoCallView.xaml.cs">
       <DependentUpon>VideoCallView.xaml</DependentUpon>
     </Compile>
