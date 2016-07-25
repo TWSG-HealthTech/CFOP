@@ -9,5 +9,6 @@ namespace CFOP.Infrastructure.Settings
         public string SecondaryKey { get; } = ConfigurationManager.AppSettings["secondaryKey"];
         public string LuisAppId { get; } = ConfigurationManager.AppSettings["luisAppId"];
         public string LuisSubscriptionId { get; } = ConfigurationManager.AppSettings["luisSubscriptionId"];
+        public string UsersFilePath { get; } = ConfigurationManager.AppSettings["usersFilePath"];
     }
 }

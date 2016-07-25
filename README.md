@@ -12,6 +12,21 @@ regsvr32.exe Skype4COM.dll
 
 Skype4COM.dll is also included in installation of Skype at `C:\Program Files (x86)\Common Files\Skype`
 
+### To use voice to activate skype calling, add users.json file to CFOP project with following content, set property to copy to output folder:
+```
+[
+  {
+    "skype": "{first_skype_id}",
+    "aliases": [ "son", "other_alias" ]
+  },
+  {
+    "skype": "{second_skype_id}",
+    "aliases": [ "daughter", "another_alias ]  
+  }
+]
+```
+This is to define different aliases that map to the same skype id
+
 ### To integrate with Google calendar
 
 - Follow instruction at https://developers.google.com/google-apps/calendar/quickstart/dotnet to create client secret json file

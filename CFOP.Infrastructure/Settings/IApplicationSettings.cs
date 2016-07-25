@@ -7,5 +7,6 @@
         string SecondaryKey { get; }
         string LuisAppId { get; }
         string LuisSubscriptionId { get; }
+        string UsersFilePath { get; }
     }
 }

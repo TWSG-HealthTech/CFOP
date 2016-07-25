@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CFOP.Service.Common;
 using CFOP.Service.VideoCall;
 using Prism.Commands;
 using Prism.Events;
@@ -8,8 +9,8 @@ namespace CFOP.VideoCall
 {
     public class VideoCallViewModel : BindableBase
     {
-        private readonly IEventAggregator _evenAggregator;
         private readonly IVideoService _videoService;
+        private readonly IManageUserService _manageUserService;
 
         private string _contact;
         public string Contact
@@ -35,25 +36,28 @@ namespace CFOP.VideoCall
             }
         }
 
-        public VideoCallViewModel(IEventAggregator evenAggregator, IVideoService videoService)
+        public VideoCallViewModel(IEventAggregator evenAggregator, IVideoService videoService, IManageUserService manageUserService)
         {
-            _evenAggregator = evenAggregator;
             _videoService = videoService;
+            _manageUserService = manageUserService;
             IsInCall = false;
 
             VideoCallCommand = new DelegateCommand(VideoCall, 
                             () => !string.IsNullOrWhiteSpace(Contact) && !IsInCall);
 
-            _evenAggregator.GetEvent<CallVideoInvoked>().Subscribe(VideoCall);
+            evenAggregator.GetEvent<CallVideoInvoked>().Subscribe(VideoCall);
         }
 
         private void VideoCall(string userId)
         {
-            //TODO: map from word like "son", "daughter" to actual skype user id
+            var user = _manageUserService.LookUpUserByAlias(userId);
 
-            //IsInCall = true;
-            var skypeProcess = Process.Start($"skype:{userId}?call&video=true");
-            //_videoService.Call(Contact);
+            if (user != null)
+            {
+                //IsInCall = true;
+                var skypeProcess = Process.Start($"skype:{user.Skype}?call&video=true");
+                //_videoService.Call(Contact);
+            }
         }
 
         #region Commands

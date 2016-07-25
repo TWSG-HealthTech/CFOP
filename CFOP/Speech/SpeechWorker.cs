@@ -141,6 +141,7 @@ namespace CFOP.Speech
             }
             else if (intentName == "CallVideo" && IsFirstIntentTriggered(intent))
             {
+                _ss.Speak("Calling");
                 var person = GetFirstIntentActionParameter(intent);
                 _eventAggregator.GetEvent<CallVideoInvoked>().Publish(person);
             }

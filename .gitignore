@@ -253,3 +253,4 @@ paket-files/
 *.sln.iml
 
 *.secret.config
+users.json
