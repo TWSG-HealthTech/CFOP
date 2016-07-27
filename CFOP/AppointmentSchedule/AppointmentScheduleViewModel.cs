@@ -50,8 +50,8 @@ namespace CFOP.AppointmentSchedule
         {
             IsIdle = true;
             UserId = "demo";
-
-            GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(GetTodaySchedule, () => !string.IsNullOrWhiteSpace(UserId));
+            
+            GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(() => GetTodaySchedule(DateTime.Now), () => !string.IsNullOrWhiteSpace(UserId));
 
             _eventAggregator = eventAggregator;
             _manageCalendarService = manageCalendarService;
@@ -63,19 +63,19 @@ namespace CFOP.AppointmentSchedule
 
         private void ShowCalendar(ShowCalendarEventParameters parameters)
         {
-            GetTodaySchedule();
+            GetTodaySchedule(parameters.Date);
         }
 
         #region Commands
 
         public DelegateCommand GetTodayScheduleCommand { get; private set; }
 
-        private async Task GetTodaySchedule()
+        private async Task GetTodaySchedule(DateTime date)
         {
             IsIdle = false;
             TodayEvents.Clear();
 
-            var events = await _manageCalendarService.FindTodayScheduleFor(UserId);
+            var events = await _manageCalendarService.FindScheduleFor(UserId, date);
             TodayEvents.AddRange(events);
 
             IsIdle = true;

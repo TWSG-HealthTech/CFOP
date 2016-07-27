@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using CFOP.AppointmentSchedule;
 using CFOP.Common;
 using CFOP.Infrastructure.Settings;
@@ -127,24 +128,26 @@ namespace CFOP.Speech
 
         private void HandlePayload(string payload)
         {
-            dynamic x = JsonConvert.DeserializeObject(payload);
-            dynamic intent = x.intents[0];
-            dynamic intentName = intent.intent;
+            var response = JsonConvert.DeserializeObject<IntentResponse>(payload);
+            var intent = response.Intents.First();
+            var intentName = intent.Name;
             if (intentName == "TellJoke")
             {
                 _ss.Speak("What wobbles in the sky? A jellycopter!");
             }
-            else if (intentName == "BuyStuff" && IsFirstIntentTriggered(intent))
+            else if (intentName == "BuyStuff" && intent.IsFirstActionTriggered())
             {
                 _ss.Speak($"OK, I'll add {GetFirstIntentActionParameter(intent)} to your shopping!");
             }
-            else if (intentName == "ShowCalendar" && IsFirstIntentTriggered(intent))
+            else if (intentName == "ShowCalendar" && intent.IsFirstActionTriggered())
             {
-                _ss.Speak("Here is todays schedule");
-                var day = DateTime.Today;
-                _scheduleConversation.Fire(ConversationEvents.AskCurrentStatus, day);
+                var date = GetFirstIntentActionParameter(intent);
+                _ss.Speak($"Here is {date} schedule");
+
+                var dateResolution = GetShowCalendarDateValue(intent);
+                _scheduleConversation.Fire(ConversationEvents.AskCurrentStatus, dateResolution);
             }
-            else if (intentName == "CallVideo" && IsFirstIntentTriggered(intent))
+            else if (intentName == "CallVideo" && intent.IsFirstActionTriggered())
             {
                 _ss.Speak("Calling");
                 var person = GetFirstIntentActionParameter(intent);
@@ -156,14 +159,16 @@ namespace CFOP.Speech
             }
         }
 
-        private string GetFirstIntentActionParameter(dynamic intent)
+        private DateTime GetShowCalendarDateValue(IntentResponse.Intent intent)
         {
-            return intent.actions[0].parameters[0].value[0].entity;
+            var value = intent.Actions.First().Parameters.First().Values.First().GetResolution("date");
+            return DateTime.ParseExact(value, "yyyy-MM-dd", new CultureInfo("en-US"));
         }
 
-        private bool IsFirstIntentTriggered(dynamic intent)
+        private string GetFirstIntentActionParameter(IntentResponse.Intent intent)
         {
-            return intent.actions[0].triggered.Value;
+            var firstParameter = intent.Actions.First().Parameters.First();
+            return firstParameter.Values.First().Entity;
         }
 
         private void OnConversationErrorHandler(object sender, SpeechErrorEventArgs e)

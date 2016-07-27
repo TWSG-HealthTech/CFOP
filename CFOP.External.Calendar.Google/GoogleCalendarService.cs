@@ -17,7 +17,7 @@ namespace CFOP.External.Calendar.Google
 {
     public class GoogleCalendarService : IManageCalendarService
     {
-        public async Task<IList<CalendarEvent>> FindTodayScheduleFor(string userId)
+        public async Task<IList<CalendarEvent>> FindScheduleFor(string userId, DateTime date)
         {
             var service = new CalendarService(new BaseClientService.Initializer()
             {
@@ -30,17 +30,16 @@ namespace CFOP.External.Calendar.Google
             return (await Task.WhenAll(
                 calendarList.Items
                             .Select(entry => 
-                                    GetTodayEventsForCalendar(service, entry))))
+                                    GetCalendarEvents(service, entry, date))))
                             .SelectMany(e => e)
                             .OrderBy(e => e.StartTime)
                             .ToList();
         }
 
-        private static async Task<IEnumerable<CalendarEvent>> GetTodayEventsForCalendar(CalendarService service, CalendarListEntry calendar)
+        private static async Task<IEnumerable<CalendarEvent>> GetCalendarEvents(CalendarService service, CalendarListEntry calendar, DateTime date)
         {
-            var now = DateTime.Now;
             var request = service.Events.List(calendar.Id);
-            request.TimeMin = new DateTime(now.Year, now.Month, now.Day);
+            request.TimeMin = new DateTime(date.Year, date.Month, date.Day);
             request.TimeMax = request.TimeMin.Value.AddDays(1);
             request.ShowDeleted = false;
             request.SingleEvents = true;
