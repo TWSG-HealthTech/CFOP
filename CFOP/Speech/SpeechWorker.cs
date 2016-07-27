@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Globalization;
+using CFOP.AppointmentSchedule;
+using CFOP.Common;
 using CFOP.Infrastructure.Settings;
 using CFOP.Speech.Events;
 using CFOP.VideoCall;
@@ -15,16 +17,18 @@ namespace CFOP.Speech
     {
         private readonly IApplicationSettings _applicationSettings;
         private readonly IEventAggregator _eventAggregator;
+        private readonly ScheduleConversation _scheduleConversation;
         private readonly SpeechSynthesizer _ss = new SpeechSynthesizer();
         private SpeechRecognitionEngine _sre;
         private MicrophoneRecognitionClient _microphoneClient;
 
         public event Action<string> Write;
 
-        public SpeechWorker(IApplicationSettings applicationSettings, IEventAggregator eventAggregator)
+        public SpeechWorker(IApplicationSettings applicationSettings, IEventAggregator eventAggregator, ScheduleConversation scheduleConversation)
         {
             _applicationSettings = applicationSettings;
             _eventAggregator = eventAggregator;
+            _scheduleConversation = scheduleConversation;
         }
 
         public void Start()
@@ -138,23 +142,18 @@ namespace CFOP.Speech
             {
                 _ss.Speak("Here is todays schedule");
                 var day = DateTime.Today;
-                Publish(new ShowCalendarEventParameters(day));
+                _scheduleConversation.Fire(ConversationEvents.AskCurrentStatus, day);
             }
             else if (intentName == "CallVideo" && IsFirstIntentTriggered(intent))
             {
                 _ss.Speak("Calling");
                 var person = GetFirstIntentActionParameter(intent);
-                Publish(new CallVideoEventParameters(person));
+                _eventAggregator.PublishVoiceEvent(new CallVideoEventParameters(person));
             }
             else
             {
                 _ss.Speak("Sorry, I don't know how to do that.");
             }
-        }
-
-        private void Publish<T>(T parameters)
-        {
-            _eventAggregator.GetEvent<VoiceCommandInvoked<T>>().Publish(parameters);
         }
 
         private string GetFirstIntentActionParameter(dynamic intent)

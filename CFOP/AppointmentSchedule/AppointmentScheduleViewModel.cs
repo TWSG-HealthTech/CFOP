@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using CFOP.Common;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
 using CFOP.Speech.Events;
@@ -57,8 +58,7 @@ namespace CFOP.AppointmentSchedule
 
             BindingOperations.EnableCollectionSynchronization(TodayEvents, new object());
 
-            var showCalendarEvent = _eventAggregator.GetEvent<VoiceCommandInvoked<ShowCalendarEventParameters>>();
-            _subscriptionToken = showCalendarEvent.Subscribe(ShowCalendar);
+            _subscriptionToken = _eventAggregator.SubscribeVoiceEvent<ShowCalendarEventParameters>(ShowCalendar);
         }
 
         private void ShowCalendar(ShowCalendarEventParameters parameters)

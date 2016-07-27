@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using CFOP.Common;
 using CFOP.Service.Common;
 using CFOP.Service.VideoCall;
 using CFOP.Speech.Events;
@@ -46,7 +47,7 @@ namespace CFOP.VideoCall
             VideoCallCommand = new DelegateCommand(VideoCall, 
                             () => !string.IsNullOrWhiteSpace(Contact) && !IsInCall);
 
-            evenAggregator.GetEvent<VoiceCommandInvoked<CallVideoEventParameters>>().Subscribe(VideoCall);
+            evenAggregator.SubscribeVoiceEvent<CallVideoEventParameters>(VideoCall);
         }
 
         private void VideoCall(CallVideoEventParameters parameters)

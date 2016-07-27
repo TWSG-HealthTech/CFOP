@@ -49,6 +49,8 @@ namespace CFOP
             builder.RegisterType<AppointmentScheduleViewModel>();
             builder.RegisterType<VideoCallViewModel>();
 
+            builder.RegisterType<ScheduleConversation>().OnActivating(args => args.Instance.Start());
+
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
             builder.RegisterType<GoogleCalendarService>().As<IManageCalendarService>();
             builder.RegisterType<Skype4COMVideoService>().As<IVideoService>();

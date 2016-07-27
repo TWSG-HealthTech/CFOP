@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Threading;
+using CFOP.AppointmentSchedule;
 using CFOP.Infrastructure.Settings;
 using CFOP.Speech;
 using Prism.Commands;
@@ -40,14 +41,14 @@ namespace CFOP
         #endregion
 
         public MainViewModel(IApplicationSettings applicationSettings, 
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator, ScheduleConversation scheduleConversation)
         {
             IsInFullScreen = false;
 
             ToggleFullScreenCommand = new DelegateCommand(ToggleFullScreen);
             ExitFullScreenCommand = new DelegateCommand(ExitFullScreen);
             
-            _speechWorker = new SpeechWorker(applicationSettings, eventAggregator);
+            _speechWorker = new SpeechWorker(applicationSettings, eventAggregator, scheduleConversation);
             _speechWorker.Write += WriteLine;
             _speechWorker.Start();
         }

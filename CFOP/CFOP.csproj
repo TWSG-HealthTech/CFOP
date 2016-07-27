@@ -55,6 +55,14 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Appccelerate.Fundamentals, Version=2.8.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Appccelerate.Fundamentals.2.8.0\lib\portable-windows8+net45\Appccelerate.Fundamentals.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Appccelerate.StateMachine, Version=2.12.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
+      <HintPath>..\packages\Appccelerate.StateMachine.2.12.0\lib\portable-windows8+net45\Appccelerate.StateMachine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
       <Private>True</Private>
@@ -117,7 +125,11 @@
       <DependentUpon>AppointmentScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppointmentSchedule\AppointmentScheduleViewModel.cs" />
+    <Compile Include="AppointmentSchedule\ConversationEvents.cs" />
+    <Compile Include="AppointmentSchedule\ConversationStates.cs" />
+    <Compile Include="AppointmentSchedule\ScheduleConversation.cs" />
     <Compile Include="Bootstrapper.cs" />
+    <Compile Include="Common\EventAggregatorExtensions.cs" />
     <Compile Include="Common\RegionNames.cs" />
     <Compile Include="Common\UI\BoolToResizeModeConverter.cs" />
     <Compile Include="Common\UI\BoolToWindowStateConverter.cs" />
