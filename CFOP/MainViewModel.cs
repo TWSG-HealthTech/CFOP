@@ -40,15 +40,14 @@ namespace CFOP
 
         #endregion
 
-        public MainViewModel(IApplicationSettings applicationSettings, 
-            IEventAggregator eventAggregator, ScheduleConversation scheduleConversation)
+        public MainViewModel(SpeechWorker speechWorker)
         {
             IsInFullScreen = false;
 
             ToggleFullScreenCommand = new DelegateCommand(ToggleFullScreen);
             ExitFullScreenCommand = new DelegateCommand(ExitFullScreen);
-            
-            _speechWorker = new SpeechWorker(applicationSettings, eventAggregator, scheduleConversation);
+
+            _speechWorker = speechWorker;
             _speechWorker.Write += WriteLine;
             _speechWorker.Start();
         }

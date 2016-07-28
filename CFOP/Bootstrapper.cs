@@ -9,7 +9,9 @@ using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.Common;
 using CFOP.Service.VideoCall;
+using CFOP.Speech;
 using CFOP.VideoCall;
+using Microsoft.Speech.Synthesis;
 using Newtonsoft.Json;
 using Prism.Autofac;
 using Prism.Mvvm;
@@ -45,16 +47,18 @@ namespace CFOP
         {
             base.ConfigureContainerBuilder(builder);
 
-            builder.RegisterType<MainViewModel>();
-            builder.RegisterType<AppointmentScheduleViewModel>();
-            builder.RegisterType<VideoCallViewModel>();
+            builder.RegisterType<MainViewModel>().SingleInstance();
+            builder.RegisterType<AppointmentScheduleViewModel>().SingleInstance();
+            builder.RegisterType<VideoCallViewModel>().SingleInstance();
 
-            builder.RegisterType<ScheduleConversation>().OnActivating(args => args.Instance.Start());
+            builder.RegisterType<SpeechWorker>().SingleInstance();
+            builder.RegisterType<SpeechSynthesizer>().SingleInstance();
+            builder.RegisterType<ScheduleConversation>().SingleInstance().OnActivating(args => args.Instance.Start());
 
-            builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
-            builder.RegisterType<GoogleCalendarService>().As<IManageCalendarService>();
-            builder.RegisterType<Skype4COMVideoService>().As<IVideoService>();
-            builder.RegisterType<ManageUserService>().As<IManageUserService>();
+            builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>().SingleInstance();
+            builder.RegisterType<GoogleCalendarService>().As<IManageCalendarService>().SingleInstance();
+            builder.RegisterType<Skype4COMVideoService>().As<IVideoService>().SingleInstance();
+            builder.RegisterType<ManageUserService>().As<IManageUserService>().SingleInstance();
             ViewModelLocationProvider.SetDefaultViewModelFactory(type => Container.Resolve(type));
         }        
 

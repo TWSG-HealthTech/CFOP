@@ -5,7 +5,6 @@ using CFOP.AppointmentSchedule;
 using CFOP.Common;
 using CFOP.Infrastructure.Settings;
 using CFOP.Speech.Events;
-using CFOP.VideoCall;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
 using Microsoft.Speech.Synthesis;
@@ -14,21 +13,25 @@ using Prism.Events;
 
 namespace CFOP.Speech
 {
-    class SpeechWorker : IDisposable
+    public class SpeechWorker : IDisposable
     {
         private readonly IApplicationSettings _applicationSettings;
         private readonly IEventAggregator _eventAggregator;
         private readonly ScheduleConversation _scheduleConversation;
-        private readonly SpeechSynthesizer _ss = new SpeechSynthesizer();
+        private readonly SpeechSynthesizer _ss;
         private SpeechRecognitionEngine _sre;
         private MicrophoneRecognitionClient _microphoneClient;
 
         public event Action<string> Write;
 
-        public SpeechWorker(IApplicationSettings applicationSettings, IEventAggregator eventAggregator, ScheduleConversation scheduleConversation)
+        public SpeechWorker(IApplicationSettings applicationSettings, 
+                            IEventAggregator eventAggregator,
+                            SpeechSynthesizer synthesizer,
+                            ScheduleConversation scheduleConversation)
         {
             _applicationSettings = applicationSettings;
             _eventAggregator = eventAggregator;
+            _ss = synthesizer;
             _scheduleConversation = scheduleConversation;
         }
 
@@ -46,9 +49,9 @@ namespace CFOP.Speech
             wakeCommands.Add("See Fop");
             wakeCommands.Add("Jefrey");
             wakeCommands.Add("Brenda");
-            GrammarBuilder gb_Wake = new GrammarBuilder();
-            gb_Wake.Append(wakeCommands);
-            Grammar grammar = new Grammar(gb_Wake);
+            GrammarBuilder grammarBuilder = new GrammarBuilder();
+            grammarBuilder.Append(wakeCommands);
+            Grammar grammar = new Grammar(grammarBuilder);
             _sre.LoadGrammarAsync(grammar);
             _sre.RecognizeAsync(RecognizeMode.Multiple);
         }
@@ -135,22 +138,23 @@ namespace CFOP.Speech
             {
                 _ss.Speak("What wobbles in the sky? A jellycopter!");
             }
-            else if (intentName == "BuyStuff" && intent.IsFirstActionTriggered())
+            else if (intentName == "BuyStuff" && intent.IsActionTriggered("BuyStuff"))
             {
-                _ss.Speak($"OK, I'll add {GetFirstIntentActionParameter(intent)} to your shopping!");
+                _ss.Speak($"OK, I'll add {GetFirstIntentActionParameter(intent, "BuyStuff", "thing")} to your shopping!");
             }
-            else if (intentName == "ShowCalendar" && intent.IsFirstActionTriggered())
+            else if (intentName == "ShowCalendar" && intent.IsActionTriggered("ShowCalendar"))
             {
-                var date = GetFirstIntentActionParameter(intent);
+                var date = GetFirstIntentActionParameter(intent, "ShowCalendar", "Day");
                 _ss.Speak($"Here is {date} schedule");
-
-                var dateResolution = GetShowCalendarDateValue(intent);
+                
+                var dateResolutionValue = intent.GetAction("ShowCalendar").GetParameter("Day").Values.First().GetResolution("date");
+                var dateResolution = DateTime.ParseExact(dateResolutionValue, "yyyy-MM-dd", new CultureInfo("en-US"));
                 _scheduleConversation.Fire(ConversationEvents.AskCurrentStatus, dateResolution);
             }
-            else if (intentName == "CallVideo" && intent.IsFirstActionTriggered())
+            else if (intentName == "CallVideo" && intent.IsActionTriggered("CallVideo"))
             {
                 _ss.Speak("Calling");
-                var person = GetFirstIntentActionParameter(intent);
+                var person = GetFirstIntentActionParameter(intent, "CallVideo", "person");
                 _eventAggregator.PublishVoiceEvent(new CallVideoEventParameters(person));
             }
             else
@@ -159,16 +163,9 @@ namespace CFOP.Speech
             }
         }
 
-        private DateTime GetShowCalendarDateValue(IntentResponse.Intent intent)
+        private string GetFirstIntentActionParameter(IntentResponse.Intent intent, string actionName, string parameterName)
         {
-            var value = intent.Actions.First().Parameters.First().Values.First().GetResolution("date");
-            return DateTime.ParseExact(value, "yyyy-MM-dd", new CultureInfo("en-US"));
-        }
-
-        private string GetFirstIntentActionParameter(IntentResponse.Intent intent)
-        {
-            var firstParameter = intent.Actions.First().Parameters.First();
-            return firstParameter.Values.First().Entity;
+            return intent.GetAction(actionName).GetParameter(parameterName).Values.First().Entity;
         }
 
         private void OnConversationErrorHandler(object sender, SpeechErrorEventArgs e)

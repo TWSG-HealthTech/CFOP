@@ -17,8 +17,22 @@ namespace CFOP.External.Calendar.Google
 {
     public class GoogleCalendarService : IManageCalendarService
     {
+        //TODO: invalidate this cache when there's a change in calendar
+        private static Dictionary<string, Dictionary<DateTime, IList<CalendarEvent>>> _eventCache = 
+            new Dictionary<string, Dictionary<DateTime, IList<CalendarEvent>>>();
+
         public async Task<IList<CalendarEvent>> FindScheduleFor(string userId, DateTime date)
         {
+            if (!_eventCache.ContainsKey(userId))
+            {
+                _eventCache[userId] = new Dictionary<DateTime, IList<CalendarEvent>>();
+            }
+
+            if (_eventCache[userId].ContainsKey(date))
+            {
+                return _eventCache[userId][date];
+            }
+
             var service = new CalendarService(new BaseClientService.Initializer()
             {
                 HttpClientInitializer = ReadUserCredential(userId),
@@ -27,19 +41,36 @@ namespace CFOP.External.Calendar.Google
 
             var calendarRequest = service.CalendarList.List();
             var calendarList = await calendarRequest.ExecuteAsync();
-            return (await Task.WhenAll(
+            var events = (await Task.WhenAll(
                 calendarList.Items
                             .Select(entry => 
                                     GetCalendarEvents(service, entry, date))))
                             .SelectMany(e => e)
                             .OrderBy(e => e.StartTime)
                             .ToList();
+
+            _eventCache[userId][date] = events;
+
+            return events;
+        }
+
+        public async Task<bool> IsUserBusyAt(string userId, DateTime time)
+        {
+            var date = ExtractDateFrom(time);
+            var events = await FindScheduleFor(userId, date);
+
+            return events.Any(e => e.IsBusyAt(time));
+        }
+
+        private static DateTime ExtractDateFrom(DateTime time)
+        {
+            return new DateTime(time.Year, time.Month, time.Day);
         }
 
         private static async Task<IEnumerable<CalendarEvent>> GetCalendarEvents(CalendarService service, CalendarListEntry calendar, DateTime date)
         {
             var request = service.Events.List(calendar.Id);
-            request.TimeMin = new DateTime(date.Year, date.Month, date.Day);
+            request.TimeMin = ExtractDateFrom(date);
             request.TimeMax = request.TimeMin.Value.AddDays(1);
             request.ShowDeleted = false;
             request.SingleEvents = true;
