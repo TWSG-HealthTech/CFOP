@@ -53,7 +53,12 @@ namespace CFOP.Speech
 
         public class Entity
         {
-            
+            [JsonProperty("entity")]
+            public string Name { get; set; }
+            public string Type { get; set; }
+            public int StartIndex { get; set; }
+            public int EndIndex { get; set; }
+            public IDictionary<string, string> Resolution { get; set; }
         }
     }
 }
