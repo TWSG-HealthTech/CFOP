@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Appccelerate.StateMachine;
 using CFOP.Common;
+using CFOP.Service.AppointmentSchedule;
+using CFOP.Service.Common;
+using CFOP.Service.VideoCall;
 using CFOP.Speech;
 using CFOP.Speech.Events;
 using Microsoft.Speech.Synthesis;
@@ -15,12 +19,22 @@ namespace CFOP.AppointmentSchedule
     {
         private readonly IList<string> _supportedIntents = new List<string> { "ShowCalendar", "CallVideo" };
         private readonly IEventAggregator _eventAggregator;
+        private readonly IManageCalendarService _manageCalendarService;
+        private readonly IManageUserService _manageUserService;
+        private readonly IVideoService _videoService;
         private readonly SpeechSynthesizer _speechSynthesizer;
         private readonly PassiveStateMachine<ScheduleStates, ScheduleEvents> _conversation;
 
-        public ScheduleConversation(IEventAggregator eventAggregator, SpeechSynthesizer speechSynthesizer)
+        public ScheduleConversation(IEventAggregator eventAggregator, 
+                                    IManageCalendarService manageCalendarService,
+                                    IManageUserService manageUserService, 
+                                    IVideoService videoService,
+                                    SpeechSynthesizer speechSynthesizer)
         {
             _eventAggregator = eventAggregator;
+            _manageCalendarService = manageCalendarService;
+            _manageUserService = manageUserService;
+            _videoService = videoService;
             _speechSynthesizer = speechSynthesizer;
             _conversation = InitializeConversationStateMachine();
         }
@@ -71,11 +85,17 @@ namespace CFOP.AppointmentSchedule
             Fire(ScheduleEvents.AskCurrentStatus, dateResolution);
         }
 
-        private void HandleCallVideo(IntentResponse.Intent intent)
+        private async Task HandleCallVideo(IntentResponse.Intent intent)
         {
-            _speechSynthesizer.Speak("Calling");
             var person = intent.GetFirstIntentActionParameter("CallVideo", "person");
-            _eventAggregator.PublishVoiceEvent(new CallVideoEventParameters(person));
+            var user = _manageUserService.LookUpUserByAlias(person);
+
+            if (!(await _manageCalendarService.IsUserBusyAt(user.Id, DateTime.Now)))
+            {
+                _speechSynthesizer.Speak("Calling");
+                _videoService.Call(user);
+            }
+            //_eventAggregator.PublishVoiceEvent(new CallVideoEventParameters(person));
         }
 
         private PassiveStateMachine<ScheduleStates, ScheduleEvents> InitializeConversationStateMachine()

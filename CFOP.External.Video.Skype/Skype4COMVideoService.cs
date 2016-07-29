@@ -1,5 +1,6 @@
 ﻿using CFOP.Service.VideoCall;
 using SKYPE4COMLib;
+using Common = CFOP.Service.Common.DTO;
 
 namespace CFOP.External.Video.Skype
 {
@@ -23,7 +24,7 @@ namespace CFOP.External.Video.Skype
             return skype;
         }
 
-        public void Call(string userId)
+        public void Call(Common.User user)
         {
             AttachToSkype();
 
@@ -33,7 +34,7 @@ namespace CFOP.External.Video.Skype
             }
 
 
-            _skype.PlaceCall(userId);
+            _skype.PlaceCall(user.Skype);
         }
 
         #region Skype Event Handlers

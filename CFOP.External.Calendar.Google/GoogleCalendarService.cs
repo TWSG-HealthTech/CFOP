@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
+using CFOP.Service.Common;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
@@ -17,11 +19,24 @@ namespace CFOP.External.Calendar.Google
 {
     public class GoogleCalendarService : IManageCalendarService
     {
-        //TODO: invalidate this cache when there's a change in calendar
-        private static Dictionary<string, Dictionary<DateTime, IList<CalendarEvent>>> _eventCache = 
-            new Dictionary<string, Dictionary<DateTime, IList<CalendarEvent>>>();
+        private readonly IUserRepository _userRepository;
 
-        public async Task<IList<CalendarEvent>> FindScheduleFor(string userId, DateTime date)
+        //TODO: invalidate this cache when there's a change in calendar
+        private static readonly Dictionary<int, Dictionary<DateTime, IList<CalendarEvent>>> _eventCache = 
+            new Dictionary<int, Dictionary<DateTime, IList<CalendarEvent>>>();
+
+        public GoogleCalendarService(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+
+        public async Task<IList<CalendarEvent>> FindScheduleFor(string userAlias, DateTime date)
+        {
+            var user = _userRepository.FindByAlias(userAlias);
+            return await FindScheduleFor(user.Id, date);
+        }
+
+        public async Task<IList<CalendarEvent>> FindScheduleFor(int userId, DateTime date)
         {
             if (!_eventCache.ContainsKey(userId))
             {
@@ -43,6 +58,7 @@ namespace CFOP.External.Calendar.Google
             var calendarList = await calendarRequest.ExecuteAsync();
             var events = (await Task.WhenAll(
                 calendarList.Items
+                            .Where(i => i.Primary.HasValue && i.Primary.Value)
                             .Select(entry => 
                                     GetCalendarEvents(service, entry, date))))
                             .SelectMany(e => e)
@@ -54,7 +70,7 @@ namespace CFOP.External.Calendar.Google
             return events;
         }
 
-        public async Task<bool> IsUserBusyAt(string userId, DateTime time)
+        public async Task<bool> IsUserBusyAt(int userId, DateTime time)
         {
             var date = ExtractDateFrom(time);
             var events = await FindScheduleFor(userId, date);
@@ -101,25 +117,23 @@ namespace CFOP.External.Calendar.Google
             return start.Value;
         }
 
-        private static UserCredential ReadUserCredential(string userId)
+        private UserCredential ReadUserCredential(int userId)
         {
-            var secretFilePath = $"Secrets/client_secret_{userId.ToLower()}.json";
-            if(!File.Exists(secretFilePath)) throw new ArgumentException($"Google client secret file for {userId} not found");
+            var user = _userRepository.FindById(userId);
+            if(user == null) throw new ArgumentException($"No user with id {userId} found");
 
-            using (var stream = new FileStream(secretFilePath, FileMode.Open, FileAccess.Read))
-            {
-                var credPath = Environment.GetFolderPath(
+            var credPath = Environment.GetFolderPath(
                     Environment.SpecialFolder.Personal);
+            var calendarSecret = new MemoryStream(Encoding.UTF8.GetBytes(user.Calendar.Google));
 
-                credPath = Path.Combine(credPath, ".credentials/cfop.json");
+            credPath = Path.Combine(credPath, ".credentials/cfop.json");
 
-                return GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(stream).Secrets,
-                    new [] { CalendarService.Scope.CalendarReadonly },
-                    "user",
-                    CancellationToken.None,
-                    new FileDataStore(credPath, true)).Result;
-            }
+            return GoogleWebAuthorizationBroker.AuthorizeAsync(
+                GoogleClientSecrets.Load(calendarSecret).Secrets,
+                new[] { CalendarService.Scope.CalendarReadonly },
+                "user",
+                CancellationToken.None,
+                new FileDataStore(credPath, true)).Result;
         }
     }
 }

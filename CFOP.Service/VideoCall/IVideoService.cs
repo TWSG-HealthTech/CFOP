@@ -1,10 +1,10 @@
 ﻿using System;
+using CFOP.Service.Common.DTO;
 
 namespace CFOP.Service.VideoCall
 {
-    [Obsolete("for now use skype uri instead")]
     public interface IVideoService
     {
-        void Call(string userId);
+        void Call(User user);
     }
 }

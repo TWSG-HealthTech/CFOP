@@ -49,7 +49,7 @@ namespace CFOP.AppointmentSchedule
         public AppointmentScheduleViewModel(IEventAggregator eventAggregator, IManageCalendarService manageCalendarService)
         {
             IsIdle = true;
-            UserId = "demo";
+            UserId = "son";
             
             GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(() => GetTodaySchedule(DateTime.Now), () => !string.IsNullOrWhiteSpace(UserId));
 

@@ -1,20 +1,19 @@
-﻿using CFOP.Infrastructure.Settings;
-using CFOP.Service.Common.DTO;
+﻿using CFOP.Service.Common.DTO;
 
 namespace CFOP.Service.Common
 {
     public class ManageUserService : IManageUserService
     {
-        private readonly FileBasedUserRegistry _userRegistry;
+        private readonly IUserRepository _userRepository;
 
-        public ManageUserService(IApplicationSettings applicationSettings)
+        public ManageUserService(IUserRepository userRepository)
         {
-            _userRegistry = new FileBasedUserRegistry(applicationSettings.UsersFilePath);
+            _userRepository = userRepository;
         }
 
         public User LookUpUserByAlias(string alias)
         {
-            return _userRegistry.LookUpByAlias(alias);
+            return _userRepository.FindByAlias(alias);
         }
     }
 }

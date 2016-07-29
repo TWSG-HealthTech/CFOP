@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using CFOP.Common;
+﻿using CFOP.Common;
 using CFOP.Service.Common;
 using CFOP.Service.VideoCall;
 using CFOP.Speech.Events;
@@ -57,8 +56,7 @@ namespace CFOP.VideoCall
             if (user != null)
             {
                 //IsInCall = true;
-                var skypeProcess = Process.Start($"skype:{user.Skype}?call&video=true");
-                //_videoService.Call(Contact);
+                _videoService.Call(user);
             }
         }
 

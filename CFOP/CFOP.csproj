@@ -232,6 +232,10 @@
       <Project>{8b2a352b-a57b-4b9d-88f1-1b746070e1b2}</Project>
       <Name>CFOP.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CFOP.Repository\CFOP.Repository.csproj">
+      <Project>{01b79915-f50d-4339-b355-0bb901bc0aef}</Project>
+      <Name>CFOP.Repository</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CFOP.Service\CFOP.Service.csproj">
       <Project>{5607e474-0048-4e9f-b1d8-fec492b6f35a}</Project>
       <Name>CFOP.Service</Name>
