@@ -145,8 +145,8 @@
       <DependentUpon>AppointmentScheduleView.xaml</DependentUpon>
     </Compile>
     <Compile Include="AppointmentSchedule\AppointmentScheduleViewModel.cs" />
-    <Compile Include="AppointmentSchedule\ConversationEvents.cs" />
-    <Compile Include="AppointmentSchedule\ConversationStates.cs" />
+    <Compile Include="AppointmentSchedule\ScheduleEvents.cs" />
+    <Compile Include="AppointmentSchedule\ScheduleStates.cs" />
     <Compile Include="AppointmentSchedule\ScheduleConversation.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Common\EventAggregatorExtensions.cs" />

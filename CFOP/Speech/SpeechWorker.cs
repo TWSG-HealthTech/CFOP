@@ -140,32 +140,16 @@ namespace CFOP.Speech
             }
             else if (intentName == "BuyStuff" && intent.IsActionTriggered("BuyStuff"))
             {
-                _ss.Speak($"OK, I'll add {GetFirstIntentActionParameter(intent, "BuyStuff", "thing")} to your shopping!");
+                _ss.Speak($"OK, I'll add {intent.GetFirstIntentActionParameter("BuyStuff", "thing")} to your shopping!");
             }
-            else if (intentName == "ShowCalendar" && intent.IsActionTriggered("ShowCalendar"))
+            else if (_scheduleConversation.CanHandle(intent))
             {
-                var date = GetFirstIntentActionParameter(intent, "ShowCalendar", "Day");
-                _ss.Speak($"Here is {date} schedule");
-                
-                var dateResolutionValue = intent.GetAction("ShowCalendar").GetParameter("Day").Values.First().GetResolution("date");
-                var dateResolution = DateTime.ParseExact(dateResolutionValue, "yyyy-MM-dd", new CultureInfo("en-US"));
-                _scheduleConversation.Fire(ConversationEvents.AskCurrentStatus, dateResolution);
-            }
-            else if (intentName == "CallVideo" && intent.IsActionTriggered("CallVideo"))
-            {
-                _ss.Speak("Calling");
-                var person = GetFirstIntentActionParameter(intent, "CallVideo", "person");
-                _eventAggregator.PublishVoiceEvent(new CallVideoEventParameters(person));
+                _scheduleConversation.Handle(intent);
             }
             else
             {
                 _ss.Speak("Sorry, I don't know how to do that.");
             }
-        }
-
-        private string GetFirstIntentActionParameter(IntentResponse.Intent intent, string actionName, string parameterName)
-        {
-            return intent.GetAction(actionName).GetParameter(parameterName).Values.First().Entity;
         }
 
         private void OnConversationErrorHandler(object sender, SpeechErrorEventArgs e)

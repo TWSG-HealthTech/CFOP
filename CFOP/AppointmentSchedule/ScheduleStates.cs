@@ -1,6 +1,6 @@
 namespace CFOP.AppointmentSchedule
 {
-    public enum ConversationStates
+    public enum ScheduleStates
     {
         Unknown,
         Initial,

@@ -41,6 +41,11 @@ namespace CFOP.Speech
                 return Actions.FirstOrDefault(a => a.Name == name);
             }
 
+            public string GetFirstIntentActionParameter(string actionName, string parameterName)
+            {
+                return GetAction(actionName).GetParameter(parameterName).Values.First().Entity;
+            }
+
             public class Action
             {
                 public bool Triggered { get; set; }
