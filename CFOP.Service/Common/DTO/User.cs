@@ -11,8 +11,16 @@ namespace CFOP.Service.Common.DTO
     {
         public class CalendarSettings
         {
-            [JsonConverter(typeof(JsonObjectAsStringConverter))]
-            public string Google { get; set; }    
+            public class GoogleCalendarSettings
+            {
+                [JsonConverter(typeof(CsvToListPropertyConverter))]
+                public List<string> CalendarNames { get; set; }
+
+                [JsonConverter(typeof(JsonObjectAsStringConverter))]
+                public string ClientSecret { get; set; }
+            }
+
+            public GoogleCalendarSettings Google { get; set; }
         }
 
         public int Id { get; private set; }

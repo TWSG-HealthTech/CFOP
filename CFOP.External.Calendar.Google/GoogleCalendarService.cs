@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using Common = CFOP.Service.Common.DTO;
 
 namespace CFOP.External.Calendar.Google
 {
@@ -33,11 +35,13 @@ namespace CFOP.External.Calendar.Google
         public async Task<IList<CalendarEvent>> FindScheduleFor(string userAlias, DateTime date)
         {
             var user = _userRepository.FindByAlias(userAlias);
-            return await FindScheduleFor(user.Id, date);
+            return await FindScheduleFor(user, date);
         }
 
-        public async Task<IList<CalendarEvent>> FindScheduleFor(int userId, DateTime date)
+        public async Task<IList<CalendarEvent>> FindScheduleFor(Common.User user, DateTime date)
         {
+            var userId = user.Id;
+
             if (!_eventCache.ContainsKey(userId))
             {
                 _eventCache[userId] = new Dictionary<DateTime, IList<CalendarEvent>>();
@@ -58,7 +62,7 @@ namespace CFOP.External.Calendar.Google
             var calendarList = await calendarRequest.ExecuteAsync();
             var events = (await Task.WhenAll(
                 calendarList.Items
-                            .Where(i => i.Primary.HasValue && i.Primary.Value)
+                            .Where(i => user.Calendar.Google.CalendarNames.Contains(i.Summary))
                             .Select(entry => 
                                     GetCalendarEvents(service, entry, date))))
                             .SelectMany(e => e)
@@ -70,10 +74,10 @@ namespace CFOP.External.Calendar.Google
             return events;
         }
 
-        public async Task<bool> IsUserBusyAt(int userId, DateTime time)
+        public async Task<bool> IsUserBusyAt(Common.User user, DateTime time)
         {
             var date = ExtractDateFrom(time);
-            var events = await FindScheduleFor(userId, date);
+            var events = await FindScheduleFor(user, date);
 
             return events.Any(e => e.IsBusyAt(time));
         }
@@ -124,7 +128,7 @@ namespace CFOP.External.Calendar.Google
 
             var credPath = Environment.GetFolderPath(
                     Environment.SpecialFolder.Personal);
-            var calendarSecret = new MemoryStream(Encoding.UTF8.GetBytes(user.Calendar.Google));
+            var calendarSecret = new MemoryStream(Encoding.UTF8.GetBytes(user.Calendar.Google.ClientSecret));
 
             credPath = Path.Combine(credPath, ".credentials/cfop.json");
 

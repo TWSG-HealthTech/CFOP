@@ -10,7 +10,7 @@ namespace CFOP.Service.AppointmentSchedule
     public interface IManageCalendarService
     {
         Task<IList<CalendarEvent>> FindScheduleFor(string userAlias, DateTime date);
-        Task<IList<CalendarEvent>> FindScheduleFor(int userId, DateTime date);
-        Task<bool> IsUserBusyAt(int userId, DateTime time);
+        Task<IList<CalendarEvent>> FindScheduleFor(User user, DateTime date);
+        Task<bool> IsUserBusyAt(User user, DateTime time);
     }
 }

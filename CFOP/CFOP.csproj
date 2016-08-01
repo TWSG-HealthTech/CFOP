@@ -150,6 +150,7 @@
     <Compile Include="AppointmentSchedule\ScheduleConversation.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Common\EventAggregatorExtensions.cs" />
+    <Compile Include="Common\IConversation.cs" />
     <Compile Include="Common\RegionNames.cs" />
     <Compile Include="Common\UI\BoolToResizeModeConverter.cs" />
     <Compile Include="Common\UI\BoolToWindowStateConverter.cs" />

@@ -16,7 +16,6 @@ namespace CFOP.Speech
     public class SpeechWorker : IDisposable
     {
         private readonly IApplicationSettings _applicationSettings;
-        private readonly IEventAggregator _eventAggregator;
         private readonly ScheduleConversation _scheduleConversation;
         private readonly SpeechSynthesizer _ss;
         private SpeechRecognitionEngine _sre;
@@ -24,13 +23,11 @@ namespace CFOP.Speech
 
         public event Action<string> Write;
 
-        public SpeechWorker(IApplicationSettings applicationSettings, 
-                            IEventAggregator eventAggregator,
+        public SpeechWorker(IApplicationSettings applicationSettings,
                             SpeechSynthesizer synthesizer,
                             ScheduleConversation scheduleConversation)
         {
             _applicationSettings = applicationSettings;
-            _eventAggregator = eventAggregator;
             _ss = synthesizer;
             _scheduleConversation = scheduleConversation;
         }
@@ -45,15 +42,16 @@ namespace CFOP.Speech
             _sre = new SpeechRecognitionEngine(ci);
             _sre.SetInputToDefaultAudioDevice();
             _sre.SpeechRecognized += OnSpeechRecognized;
-            Choices wakeCommands = new Choices();
-            wakeCommands.Add("See Fop");
-            wakeCommands.Add("Jefrey");
-            wakeCommands.Add("Brenda");
-            GrammarBuilder grammarBuilder = new GrammarBuilder();
-            grammarBuilder.Append(wakeCommands);
-            Grammar grammar = new Grammar(grammarBuilder);
-            _sre.LoadGrammarAsync(grammar);
+
+            _sre.LoadGrammarAsync(CreateGrammer("See Fop", "Jefrey", "Brenda"));
+            _sre.LoadGrammarAsync(CreateGrammer("OK", "Yes", "Yes Please", "Sure"));
+
             _sre.RecognizeAsync(RecognizeMode.Multiple);
+        }
+
+        private Grammar CreateGrammer(params string[] choices)
+        {
+            return new Grammar(new GrammarBuilder(new Choices(choices)));
         }
 
         private void SetupActiveListener()
@@ -98,6 +96,10 @@ namespace CFOP.Speech
             {
                 Write("CFOP got woken!");
                 _ss.Speak("Don't worry, you're not that old!");
+            }
+            if (txt == "OK")
+            {
+                _ss.Speak("OK recognized");
             }
         }
 

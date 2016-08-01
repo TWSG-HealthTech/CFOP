@@ -15,7 +15,10 @@
       "skype": "{first_skype_id}",
       "aliases": [ "son", "other_alias" ],
       "calendar": {
-        "google": {google_calendar_secret_file_content}
+        "google": {
+          "calendarNames": "Singapore Events,Blah blah",
+          "clientSecret": {google_calendar_secret_file_content}
+        }
       }
     },
     {
@@ -23,13 +26,17 @@
       "skype": "{second_skype_id}",
       "aliases": [ "daughter", "another_alias ],
       "calendar": {
-        "google": {google_calendar_secret_file_content}
+        "google": {
+          "calendarNames": "Singapore Events,Blah blah",
+          "clientSecret": {google_calendar_secret_file_content}
+        }
       }
     }
   ]
   ```
 - Follow instruction at https://developers.google.com/google-apps/calendar/quickstart/dotnet to create client secret json file
 - Download client secret file, copy the content and replace the place holder `{google_calendar_secret_file_content}` in `users.json` file above
+- Change CSV property `calendar.google.calendarNames` to calendars you want to retrieve
 - Add in your keys to the AppSettings.secret.config file in CFOP project.  The file should look similar to the following:
   ```
   <?xml version="1.0" encoding="utf-8" ?>

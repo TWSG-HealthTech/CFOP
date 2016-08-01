@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="JSON\CsvToListPropertyConverter.cs" />
     <Compile Include="JSON\JsonObjectAsStringConverter.cs" />
     <Compile Include="JSON\PrivateSetterContractResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -90,12 +90,15 @@ namespace CFOP.AppointmentSchedule
             var person = intent.GetFirstIntentActionParameter("CallVideo", "person");
             var user = _manageUserService.LookUpUserByAlias(person);
 
-            if (!(await _manageCalendarService.IsUserBusyAt(user.Id, DateTime.Now)))
+            if (await _manageCalendarService.IsUserBusyAt(user, DateTime.Now))
+            {
+                _speechSynthesizer.Speak($"{person} is busy at the moment. Do you still want to call {person} now?");
+            }
+            else
             {
                 _speechSynthesizer.Speak("Calling");
                 _videoService.Call(user);
             }
-            //_eventAggregator.PublishVoiceEvent(new CallVideoEventParameters(person));
         }
 
         private PassiveStateMachine<ScheduleStates, ScheduleEvents> InitializeConversationStateMachine()
