@@ -4,7 +4,6 @@ namespace CFOP.Speech
     {
         bool CanHandle(IntentResponse.Intent intent);
         void Handle(IntentResponse.Intent intent);
-        void HandleConfirmation();
-        void HandleCancelling();
+        void HandleCommonSpeech(CommonSpeechTypes type, object args = null);
     }
 }

@@ -4,8 +4,7 @@ namespace CFOP.AppointmentSchedule
     {
         Unknown,
         Initial,
-        EventsListed,
-        FreeTimeHighlighted,
-        Scheduled
+        CalendarShown,
+        WaitingConfirmation
     }
 }

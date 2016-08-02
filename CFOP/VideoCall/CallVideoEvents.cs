@@ -4,7 +4,7 @@ namespace CFOP.VideoCall
     {
         Unknown,
         CallInitiated,
-        ConfirmCalling,
-        CancelCalling
+        CallConfirmed,
+        CallCancelled
     }
 }

@@ -31,8 +31,7 @@ namespace CFOP.Speech
         }
 
         public abstract void Handle(IntentResponse.Intent intent);
-        public abstract void HandleConfirmation();
-        public abstract void HandleCancelling();
+        public abstract void HandleCommonSpeech(CommonSpeechTypes type, object args);
         protected abstract PassiveStateMachine<TStates, TEvents> Initialize();
 
         public void Dispose()

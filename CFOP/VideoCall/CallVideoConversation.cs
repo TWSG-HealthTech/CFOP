@@ -37,14 +37,15 @@ namespace CFOP.VideoCall
             var conversation = new PassiveStateMachine<CallVideoStates, CallVideoEvents>();
 
             conversation.In(CallVideoStates.Initial)
+                .ExecuteOnEntry(Reset)
                 .On(CallVideoEvents.CallInitiated)
                     .If<IntentResponse.Intent>(UserIsBusy).Goto(CallVideoStates.WaitingConfirmation)
-                    .Otherwise().Execute(CallAndReset);
+                    .Otherwise().Goto(CallVideoStates.Initial).Execute(Call);
 
             conversation.In(CallVideoStates.WaitingConfirmation)
                 .ExecuteOnEntry(() => _speechSynthesizer.Speak($"{_alias} is busy at the moment. Do you still want to call {_alias} now?"))
-                .On(CallVideoEvents.CancelCalling).Goto(CallVideoStates.Initial)
-                .On(CallVideoEvents.ConfirmCalling).Goto(CallVideoStates.Initial).Execute(CallAndReset);
+                .On(CallVideoEvents.CallCancelled).Goto(CallVideoStates.Initial).Execute(() => _speechSynthesizer.Speak("OK, the call is cancelled"))
+                .On(CallVideoEvents.CallConfirmed).Goto(CallVideoStates.Initial).Execute(Call);
 
             conversation.Initialize(CallVideoStates.Initial);
 
@@ -58,14 +59,17 @@ namespace CFOP.VideoCall
 
             Conversation.Fire(CallVideoEvents.CallInitiated, intent);
         }
-        public override void HandleConfirmation()
+        public override void HandleCommonSpeech(CommonSpeechTypes type, object args)
         {
-            Conversation.Fire(CallVideoEvents.ConfirmCalling);
-        }
-
-        public override void HandleCancelling()
-        {
-            Conversation.Fire(CallVideoEvents.CancelCalling);
+            switch (type)
+            {
+                case CommonSpeechTypes.Confirmation:
+                    Conversation.Fire(CallVideoEvents.CallConfirmed);
+                    break;
+                case CommonSpeechTypes.Cancel:
+                    Conversation.Fire(CallVideoEvents.CallCancelled);
+                    break;
+            }   
         }
 
         private bool UserIsBusy(IntentResponse.Intent intent)
@@ -73,11 +77,14 @@ namespace CFOP.VideoCall
             return _manageCalendarService.IsUserBusyAt(_currentUser, DateTime.Now).Result;
         }
 
-        private void CallAndReset()
+        private void Call()
         {
             _speechSynthesizer.Speak("Calling");
             _videoService.Call(_currentUser);
+        }
 
+        private void Reset()
+        {
             _currentUser = null;
         }
     }
