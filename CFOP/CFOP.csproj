@@ -150,17 +150,22 @@
     <Compile Include="AppointmentSchedule\ScheduleConversation.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Common\EventAggregatorExtensions.cs" />
-    <Compile Include="Common\IConversation.cs" />
+    <Compile Include="Speech\IConversation.cs" />
     <Compile Include="Common\RegionNames.cs" />
     <Compile Include="Common\UI\BoolToResizeModeConverter.cs" />
     <Compile Include="Common\UI\BoolToWindowStateConverter.cs" />
     <Compile Include="Common\UI\BoolToWindowStyleConverter.cs" />
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="Speech\CommonSpeechChoices.cs" />
     <Compile Include="Speech\Events\ShowCalendarEventParameters.cs" />
     <Compile Include="Speech\IntentResponse.cs" />
     <Compile Include="Speech\SpeechWorker.cs" />
     <Compile Include="Speech\Events\VoiceCommandInvoked.cs" />
     <Compile Include="Speech\Events\CallVideoEventParameters.cs" />
+    <Compile Include="Speech\StateMachineConversationBase.cs" />
+    <Compile Include="VideoCall\CallVideoConversation.cs" />
+    <Compile Include="VideoCall\CallVideoEvents.cs" />
+    <Compile Include="VideoCall\CallVideoStates.cs" />
     <Compile Include="VideoCall\VideoCallView.xaml.cs">
       <DependentUpon>VideoCallView.xaml</DependentUpon>
     </Compile>

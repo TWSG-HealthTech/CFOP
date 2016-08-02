@@ -1,22 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using CFOP.AppointmentSchedule;
-using CFOP.Common;
+using Appccelerate.StateMachine;
 using CFOP.Infrastructure.Settings;
-using CFOP.Speech.Events;
+using CFOPIConversation = CFOP.Speech.IConversation;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
 using Microsoft.Speech.Synthesis;
 using Newtonsoft.Json;
-using Prism.Events;
 
 namespace CFOP.Speech
 {
     public class SpeechWorker : IDisposable
     {
         private readonly IApplicationSettings _applicationSettings;
-        private readonly ScheduleConversation _scheduleConversation;
+        private readonly IList<CFOPIConversation> _conversations;
         private readonly SpeechSynthesizer _ss;
         private SpeechRecognitionEngine _sre;
         private MicrophoneRecognitionClient _microphoneClient;
@@ -25,11 +24,11 @@ namespace CFOP.Speech
 
         public SpeechWorker(IApplicationSettings applicationSettings,
                             SpeechSynthesizer synthesizer,
-                            ScheduleConversation scheduleConversation)
+                            IList<CFOPIConversation> conversations)
         {
             _applicationSettings = applicationSettings;
             _ss = synthesizer;
-            _scheduleConversation = scheduleConversation;
+            _conversations = conversations;
         }
 
         public void Start()
@@ -44,7 +43,8 @@ namespace CFOP.Speech
             _sre.SpeechRecognized += OnSpeechRecognized;
 
             _sre.LoadGrammarAsync(CreateGrammer("See Fop", "Jefrey", "Brenda"));
-            _sre.LoadGrammarAsync(CreateGrammer("OK", "Yes", "Yes Please", "Sure"));
+            _sre.LoadGrammarAsync(CreateGrammer(CommonSpeechChoices.ConfirmChoices()));
+            _sre.LoadGrammarAsync(CreateGrammer(CommonSpeechChoices.CancelChoices()));
 
             _sre.RecognizeAsync(RecognizeMode.Multiple);
         }
@@ -97,9 +97,14 @@ namespace CFOP.Speech
                 Write("CFOP got woken!");
                 _ss.Speak("Don't worry, you're not that old!");
             }
-            if (txt == "OK")
+
+            if (CommonSpeechChoices.ConfirmChoices().Any(c => c == txt))
             {
-                _ss.Speak("OK recognized");
+                _conversations.ForEach(c => c.HandleConfirmation());
+            }
+            else if (CommonSpeechChoices.CancelChoices().Any(c => c == txt))
+            {
+                _conversations.ForEach(c => c.HandleCancelling());
             }
         }
 
@@ -144,9 +149,10 @@ namespace CFOP.Speech
             {
                 _ss.Speak($"OK, I'll add {intent.GetFirstIntentActionParameter("BuyStuff", "thing")} to your shopping!");
             }
-            else if (_scheduleConversation.CanHandle(intent))
+            else if (_conversations.Any(c => c.CanHandle(intent)))
             {
-                _scheduleConversation.Handle(intent);
+                var conversation = _conversations.FirstOrDefault(c => c.CanHandle(intent));
+                conversation?.Handle(intent);
             }
             else
             {

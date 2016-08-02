@@ -54,7 +54,8 @@ namespace CFOP
 
             builder.RegisterType<SpeechWorker>().SingleInstance();
             builder.RegisterType<SpeechSynthesizer>().SingleInstance();
-            builder.RegisterType<ScheduleConversation>().SingleInstance().OnActivating(args => args.Instance.Start());
+            builder.RegisterType<ScheduleConversation>().As<IConversation>().SingleInstance().OnActivating(args => args.Instance.Start());
+            builder.RegisterType<CallVideoConversation>().As<IConversation>().SingleInstance().OnActivating(args => args.Instance.Start());
 
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>().SingleInstance();
             builder.RegisterType<GoogleCalendarService>().As<IManageCalendarService>().SingleInstance();
