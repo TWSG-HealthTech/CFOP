@@ -102,6 +102,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CFOP.Infrastructure\CFOP.Infrastructure.csproj">
+      <Project>{8B2A352B-A57B-4B9D-88F1-1B746070E1B2}</Project>
+      <Name>CFOP.Infrastructure</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CFOP.Service\CFOP.Service.csproj">
       <Project>{5607e474-0048-4e9f-b1d8-fec492b6f35a}</Project>
       <Name>CFOP.Service</Name>

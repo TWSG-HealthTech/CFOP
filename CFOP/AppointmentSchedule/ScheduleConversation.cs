@@ -4,7 +4,11 @@ using System.Globalization;
 using System.Linq;
 using Appccelerate.StateMachine;
 using CFOP.Common;
+using CFOP.Infrastructure.Helpers;
 using CFOP.Service.AppointmentSchedule;
+using CFOP.Service.AppointmentSchedule.DTO;
+using CFOP.Service.Common;
+using CFOP.Service.Common.DTO;
 using CFOP.Speech;
 using CFOP.Speech.Events;
 using Microsoft.Speech.Synthesis;
@@ -14,21 +18,28 @@ namespace CFOP.AppointmentSchedule
 {
     public class ScheduleConversation : StateMachineConversationBase<ScheduleStates, ScheduleEvents>
     {
+        private const int TalkDurationInHours = 1;
+
         private readonly IEventAggregator _eventAggregator;
         private readonly IManageCalendarService _manageCalendarService;
+        private readonly IManageUserService _manageUserService;
         private readonly SpeechSynthesizer _speechSynthesizer;
+
         private string _date;
         private DateTime _dateResolution;
         private string _chosenTime;
-        private TimeSpan _chosenTimeResolution;
+        private DateTime _chosenTimeResolution;
+        private User _user;
 
         public ScheduleConversation(IEventAggregator eventAggregator,
                                     IManageCalendarService manageCalendarService,
+                                    IManageUserService manageUserService,
                                     SpeechSynthesizer speechSynthesizer)
             :base(new List<string> { "ShowCalendar", "ChooseTime" })
         {
             _eventAggregator = eventAggregator;
             _manageCalendarService = manageCalendarService;
+            _manageUserService = manageUserService;
             _speechSynthesizer = speechSynthesizer;
         }
 
@@ -42,6 +53,9 @@ namespace CFOP.AppointmentSchedule
                     var dateResolutionValue = intent.GetAction("ShowCalendar").GetParameter("Day").Values.First().GetResolution("date");
                     _dateResolution = DateTime.ParseExact(dateResolutionValue, "yyyy-MM-dd", new CultureInfo("en-US"));
 
+                    var alias = intent.GetFirstIntentActionParameter("ShowCalendar", "person");
+                    _user = _manageUserService.LookUpUserByAlias(alias);
+
                     Conversation.Fire(ScheduleEvents.ScheduleInitiated);
                     break;
                 case "ChooseTime":
@@ -50,7 +64,7 @@ namespace CFOP.AppointmentSchedule
 
                     var chosenTimeResolutionValue =
                         intent.GetAction("ChooseTime").GetParameter("time").Values.First().GetResolution("time");
-                    _chosenTimeResolution = TimeSpan.FromHours(double.Parse(chosenTimeResolutionValue.Substring(1)));
+                    _chosenTimeResolution = DateTime.Now.ToDate().AddHours(double.Parse(chosenTimeResolutionValue.Substring(TalkDurationInHours)));
 
                     Conversation.Fire(ScheduleEvents.TimeslotChosen);
                     break;
@@ -73,7 +87,7 @@ namespace CFOP.AppointmentSchedule
 
         protected override PassiveStateMachine<ScheduleStates, ScheduleEvents> Initialize()
         {
-            var conversation = new PassiveStateMachine<ScheduleStates, ScheduleEvents>("ScheduleConversation");
+            var conversation = new PassiveStateMachine<ScheduleStates, ScheduleEvents>();
 
             conversation.In(ScheduleStates.Initial)
                 .On(ScheduleEvents.ScheduleInitiated)
@@ -84,7 +98,7 @@ namespace CFOP.AppointmentSchedule
                 .On(ScheduleEvents.TimeslotChosen)
                     .If(TimeslotIsValid).Goto(ScheduleStates.WaitingConfirmation)
                     .Otherwise().Execute(PromptReselectTimeslot)
-                .On(ScheduleEvents.ScheduleCancelled).Goto(ScheduleStates.Initial);
+                .On(ScheduleEvents.ScheduleCancelled).Goto(ScheduleStates.Initial).Execute(SayCancel);
 
             conversation.In(ScheduleStates.WaitingConfirmation)
                 .ExecuteOnEntry(PromptConfirmation)
@@ -92,7 +106,7 @@ namespace CFOP.AppointmentSchedule
                     .If(TimeslotIsValid).Goto(ScheduleStates.WaitingConfirmation)
                     .Otherwise().Goto(ScheduleStates.CalendarShown).Execute(PromptReselectTimeslot)
                 .On(ScheduleEvents.ScheduleConfirmed).Goto(ScheduleStates.Initial).Execute(CreateEventInCalendar)
-                .On(ScheduleEvents.ScheduleCancelled).Goto(ScheduleStates.Initial);
+                .On(ScheduleEvents.ScheduleCancelled).Goto(ScheduleStates.Initial).Execute(SayCancel);
 
             conversation.Initialize(ScheduleStates.Initial);
 
@@ -107,8 +121,16 @@ namespace CFOP.AppointmentSchedule
 
         private bool TimeslotIsValid()
         {
-            //TODO: check whether selected timeslot is valid (not conflicting with calendar)
-            return true;
+            //Assume the talk takes 1h
+            return _manageCalendarService.IsUserBusyBetween(
+                _user, 
+                _chosenTimeResolution, 
+                _chosenTimeResolution.AddHours(TalkDurationInHours)).Result;
+        }
+
+        private void SayCancel()
+        {
+            _speechSynthesizer.Speak("the scheduling is cancelled");
         }
 
         private void PromptConfirmation()
@@ -124,7 +146,12 @@ namespace CFOP.AppointmentSchedule
 
         private void CreateEventInCalendar()
         {
-            //TODO: create event in google calendar
+            _manageCalendarService.CreateEventInPrimaryCalendar(_user,
+                new CalendarEvent(
+                    "Talk to mom", 
+                    _chosenTimeResolution, 
+                    _chosenTimeResolution.AddHours(TalkDurationInHours)));
+
             _speechSynthesizer.Speak("event is created in calendar");
         }
     }

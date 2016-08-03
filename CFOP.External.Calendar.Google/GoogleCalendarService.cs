@@ -7,6 +7,7 @@ using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CFOP.Infrastructure.Helpers;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
 using CFOP.Service.Common;
@@ -52,11 +53,7 @@ namespace CFOP.External.Calendar.Google
                 return _eventCache[userId][date];
             }
 
-            var service = new CalendarService(new BaseClientService.Initializer()
-            {
-                HttpClientInitializer = ReadUserCredential(userId),
-                ApplicationName = "CFOP",
-            });
+            var service = CreateCalendarService(userId);
 
             var calendarRequest = service.CalendarList.List();
             var calendarList = await calendarRequest.ExecuteAsync();
@@ -76,21 +73,44 @@ namespace CFOP.External.Calendar.Google
 
         public async Task<bool> IsUserBusyAt(Common.User user, DateTime time)
         {
-            var date = ExtractDateFrom(time);
+            var date = time.ToDate();
             var events = await FindScheduleFor(user, date);
 
             return events.Any(e => e.IsBusyAt(time));
         }
 
-        private static DateTime ExtractDateFrom(DateTime time)
+        public async Task<bool> IsUserBusyBetween(Common.User user, DateTime from, DateTime to)
         {
-            return new DateTime(time.Year, time.Month, time.Day);
+            var date = from.ToDate();
+            var events = await FindScheduleFor(user, date);
+
+            return events.Any(e => e.IsBusyBetween(from, to));
+        }
+
+        public async Task CreateEventInPrimaryCalendar(Common.User user, CalendarEvent e)
+        {
+            var service = CreateCalendarService(user.Id);
+
+            var calendarRequest = service.CalendarList.List();
+            var calendarList = await calendarRequest.ExecuteAsync();
+
+            var insertRequest = service.Events.Insert(new Event
+            {
+                Summary = e.Name,
+                Start = new EventDateTime { DateTime = e.StartTime },
+                End = new EventDateTime { DateTime = e.EndTime }
+            }, 
+            calendarList.Items.FirstOrDefault(i => 
+                i.Primary != null && i.Primary.Value).Id);
+
+
+            await insertRequest.ExecuteAsync();
         }
 
         private static async Task<IEnumerable<CalendarEvent>> GetCalendarEvents(CalendarService service, CalendarListEntry calendar, DateTime date)
         {
             var request = service.Events.List(calendar.Id);
-            request.TimeMin = ExtractDateFrom(date);
+            request.TimeMin = date.ToDate();
             request.TimeMax = request.TimeMin.Value.AddDays(1);
             request.ShowDeleted = false;
             request.SingleEvents = true;
@@ -119,6 +139,17 @@ namespace CFOP.External.Calendar.Google
             }
 
             return start.Value;
+        }
+
+        private CalendarService CreateCalendarService(int userId)
+        {
+            var service = new CalendarService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = ReadUserCredential(userId),
+                ApplicationName = "CFOP",
+            });
+
+            return service;
         }
 
         private UserCredential ReadUserCredential(int userId)

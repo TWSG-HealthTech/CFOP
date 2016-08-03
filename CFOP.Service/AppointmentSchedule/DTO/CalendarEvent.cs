@@ -19,5 +19,10 @@ namespace CFOP.Service.AppointmentSchedule.DTO
         {
             return StartTime <= time && time <= EndTime;
         }
+
+        public bool IsBusyBetween(DateTime from, DateTime to)
+        {
+            return !(EndTime <= from || StartTime >= to);
+        }
     }
 }
