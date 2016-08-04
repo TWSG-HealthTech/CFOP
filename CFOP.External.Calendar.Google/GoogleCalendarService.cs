@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CFOP.Infrastructure.Helpers;
+using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
 using CFOP.Service.Common;
@@ -23,14 +24,16 @@ namespace CFOP.External.Calendar.Google
     public class GoogleCalendarService : IManageCalendarService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IApplicationSettings _applicationSettings;
 
         //TODO: invalidate this cache when there's a change in calendar
         private static readonly Dictionary<int, Dictionary<DateTime, IList<CalendarEvent>>> _eventCache = 
             new Dictionary<int, Dictionary<DateTime, IList<CalendarEvent>>>();
 
-        public GoogleCalendarService(IUserRepository userRepository)
+        public GoogleCalendarService(IUserRepository userRepository, IApplicationSettings applicationSettings)
         {
             _userRepository = userRepository;
+            _applicationSettings = applicationSettings;
         }
 
         public async Task<IList<CalendarEvent>> FindScheduleFor(string userAlias, DateTime date)
@@ -83,7 +86,6 @@ namespace CFOP.External.Calendar.Google
         {
             var date = from.ToDate();
             var events = await FindScheduleFor(user, date);
-
             return events.Any(e => e.IsBusyBetween(from, to));
         }
 
@@ -94,20 +96,22 @@ namespace CFOP.External.Calendar.Google
             var calendarRequest = service.CalendarList.List();
             var calendarList = await calendarRequest.ExecuteAsync();
 
+            var primaryCalendar = calendarList.Items.FirstOrDefault(i =>
+                i.Primary != null && i.Primary.Value);
+
             var insertRequest = service.Events.Insert(new Event
             {
                 Summary = e.Name,
                 Start = new EventDateTime { DateTime = e.StartTime },
                 End = new EventDateTime { DateTime = e.EndTime }
-            }, 
-            calendarList.Items.FirstOrDefault(i => 
-                i.Primary != null && i.Primary.Value).Id);
+            },
+            primaryCalendar.Id);
 
 
             await insertRequest.ExecuteAsync();
         }
 
-        private static async Task<IEnumerable<CalendarEvent>> GetCalendarEvents(CalendarService service, CalendarListEntry calendar, DateTime date)
+        private async Task<IEnumerable<CalendarEvent>> GetCalendarEvents(CalendarService service, CalendarListEntry calendar, DateTime date)
         {
             var request = service.Events.List(calendar.Id);
             request.TimeMin = date.ToDate();
@@ -119,10 +123,12 @@ namespace CFOP.External.Calendar.Google
 
             var events = await request.ExecuteAsync();
 
-
             if (events.Items == null || events.Items.Count <= 0) return new List<CalendarEvent>();
 
-            return events.Items.Select(eventItem =>
+            return events.Items
+                .Where(eventItem => eventItem.Attendees != null &&
+                    eventItem.Attendees.Any(a => a.Email == _applicationSettings.MainUserEmail))
+                .Select(eventItem =>
             {
                 var start = ExtractTime(eventItem.Start);
                 var end = ExtractTime(eventItem.End);

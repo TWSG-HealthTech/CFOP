@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Appccelerate.StateMachine;
 using CFOP.Common;
 using CFOP.Infrastructure.Helpers;
@@ -30,6 +31,7 @@ namespace CFOP.AppointmentSchedule
         private string _chosenTime;
         private DateTime _chosenTimeResolution;
         private User _user;
+        private string _alias;
 
         public ScheduleConversation(IEventAggregator eventAggregator,
                                     IManageCalendarService manageCalendarService,
@@ -53,8 +55,8 @@ namespace CFOP.AppointmentSchedule
                     var dateResolutionValue = intent.GetAction("ShowCalendar").GetParameter("Day").Values.First().GetResolution("date");
                     _dateResolution = DateTime.ParseExact(dateResolutionValue, "yyyy-MM-dd", new CultureInfo("en-US"));
 
-                    var alias = intent.GetFirstIntentActionParameter("ShowCalendar", "person");
-                    _user = _manageUserService.LookUpUserByAlias(alias);
+                    _alias = intent.GetFirstIntentActionParameter("ShowCalendar", "person");
+                    _user = _manageUserService.LookUpUserByAlias(_alias);
 
                     Conversation.Fire(ScheduleEvents.ScheduleInitiated);
                     break;
@@ -115,14 +117,13 @@ namespace CFOP.AppointmentSchedule
 
         private void ShowCalendar()
         {
-            _speechSynthesizer.Speak($"Here is {_date} schedule");
-            _eventAggregator.PublishVoiceEvent(new ShowCalendarEventParameters(_dateResolution));
+            _speechSynthesizer.Speak($"Here is {_date} schedule, what time do you want to schedule the talk?");
+            _eventAggregator.PublishVoiceEvent(new ShowCalendarEventParameters(_alias, _dateResolution));
         }
 
         private bool TimeslotIsValid()
         {
-            //Assume the talk takes 1h
-            return _manageCalendarService.IsUserBusyBetween(
+            return !_manageCalendarService.IsUserBusyBetween(
                 _user, 
                 _chosenTimeResolution, 
                 _chosenTimeResolution.AddHours(TalkDurationInHours)).Result;
@@ -150,7 +151,8 @@ namespace CFOP.AppointmentSchedule
                 new CalendarEvent(
                     "Talk to mom", 
                     _chosenTimeResolution, 
-                    _chosenTimeResolution.AddHours(TalkDurationInHours)));
+                    _chosenTimeResolution.AddHours(TalkDurationInHours)))
+                    .Wait();
 
             _speechSynthesizer.Speak("event is created in calendar");
         }

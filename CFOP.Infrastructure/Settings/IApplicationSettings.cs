@@ -8,5 +8,6 @@
         string LuisAppId { get; }
         string LuisSubscriptionId { get; }
         string UsersFilePath { get; }
+        string MainUserEmail { get; }
     }
 }

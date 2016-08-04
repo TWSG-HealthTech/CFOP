@@ -45,6 +45,7 @@
     <add key="secondaryKey" value="???"/>
     <add key="luisAppId" value="???"/>
     <add key="luisSubscriptionId" value="???"/>
+    <add key="mainUserEmail" value="???"/>
   </appSettings>
   ```
 

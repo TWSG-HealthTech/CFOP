@@ -27,14 +27,14 @@ namespace CFOP.AppointmentSchedule
             }
         }
 
-        private string _userId;
-        public string UserId
+        private string _userAlias;
+        public string UserAlias
         {
-            get { return _userId; }
+            get { return _userAlias; }
             set
             {
-                _userId = value;
-                OnPropertyChanged(() => UserId);
+                _userAlias = value;
+                OnPropertyChanged(() => UserAlias);
                 GetTodayScheduleCommand?.RaiseCanExecuteChanged();
             }
         }
@@ -49,9 +49,9 @@ namespace CFOP.AppointmentSchedule
         public AppointmentScheduleViewModel(IEventAggregator eventAggregator, IManageCalendarService manageCalendarService)
         {
             IsIdle = true;
-            UserId = "son";
+            UserAlias = "son";
             
-            GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(() => GetTodaySchedule(DateTime.Now), () => !string.IsNullOrWhiteSpace(UserId));
+            GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(() => GetTodaySchedule(UserAlias, DateTime.Now), () => !string.IsNullOrWhiteSpace(UserAlias));
 
             _eventAggregator = eventAggregator;
             _manageCalendarService = manageCalendarService;
@@ -63,19 +63,19 @@ namespace CFOP.AppointmentSchedule
 
         private void ShowCalendar(ShowCalendarEventParameters parameters)
         {
-            GetTodaySchedule(parameters.Date);
+            GetTodaySchedule(parameters.Alias, parameters.Date).ConfigureAwait(false);
         }
 
         #region Commands
 
         public DelegateCommand GetTodayScheduleCommand { get; private set; }
 
-        private async Task GetTodaySchedule(DateTime date)
+        private async Task GetTodaySchedule(string userAlias, DateTime date)
         {
             IsIdle = false;
             TodayEvents.Clear();
 
-            var events = await _manageCalendarService.FindScheduleFor(UserId, date);
+            var events = await _manageCalendarService.FindScheduleFor(userAlias, date);
             TodayEvents.AddRange(events);
 
             IsIdle = true;
