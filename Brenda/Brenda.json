@@ -11,6 +11,9 @@
       "name": "BuyStuff"
     },
     {
+      "name": "ChooseTime"
+    },
+    {
       "name": "ShowCalendar"
     },
     {
@@ -41,6 +44,11 @@
           "parameterName": "Day",
           "entityName": "datetime",
           "required": false
+        },
+        {
+          "parameterName": "person",
+          "entityName": "Person",
+          "required": false
         }
       ]
     },
@@ -59,6 +67,17 @@
       "actionName": "TellJoke",
       "intentName": "TellJoke",
       "actionParameters": []
+    },
+    {
+      "actionName": "ChooseTime",
+      "intentName": "ChooseTime",
+      "actionParameters": [
+        {
+          "parameterName": "time",
+          "entityName": "datetime",
+          "required": false
+        }
+      ]
     },
     {
       "actionName": "CallVideo",
@@ -519,7 +538,13 @@
     {
       "text": "what am i doing today",
       "intent": "ShowCalendar",
-      "entities": []
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
     },
     {
       "text": "show me my schedule",
@@ -615,7 +640,13 @@
     {
       "text": "i doing tomorrow brenda",
       "intent": "ShowCalendar",
-      "entities": []
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 0,
+          "endPos": 0
+        }
+      ]
     },
     {
       "text": "when are young adults",
@@ -701,6 +732,106 @@
     {
       "text": "brenda call my son",
       "intent": "CallVideo",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "show my son's schedule today",
+      "intent": "ShowCalendar",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 2,
+          "endPos": 2
+        }
+      ]
+    },
+    {
+      "text": "3 p.m",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "4 in the afternoon",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "10 tonight",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "set it to 8 am",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "call at 10 in the morning",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "brenda 3 in the afternoon",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "brenda 3 pm",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "brenda set it to 4 pm",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "brenda call at 10 in the morning",
+      "intent": "ChooseTime",
+      "entities": []
+    },
+    {
+      "text": "show me my son's schedule",
+      "intent": "ShowCalendar",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "what's on my daughter's schedule",
+      "intent": "ShowCalendar",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 5,
+          "endPos": 5
+        }
+      ]
+    },
+    {
+      "text": "what is my son up to",
+      "intent": "ShowCalendar",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "what is my son doing today",
+      "intent": "ShowCalendar",
       "entities": [
         {
           "entity": "Person",
