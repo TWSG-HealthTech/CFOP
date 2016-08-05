@@ -37,7 +37,8 @@ namespace CFOP.Speech
             _ss.SetOutputToDefaultAudioDevice();
             Write("(Speaking: I am awake)");
             _ss.Speak("I am awake");
-            CultureInfo ci = new CultureInfo(_applicationSettings.Locale);
+
+            var ci = new CultureInfo(_applicationSettings.Locale);
             _sre = new SpeechRecognitionEngine(ci);
             _sre.SetInputToDefaultAudioDevice();
             _sre.SpeechRecognized += OnSpeechRecognized;
@@ -45,33 +46,8 @@ namespace CFOP.Speech
             _sre.LoadGrammarAsync(CreateGrammar("See Fop", "Jefrey", "Brenda"));
             _sre.LoadGrammarAsync(CreateGrammar(CommonSpeechChoices.ConfirmChoices()));
             _sre.LoadGrammarAsync(CreateGrammar(CommonSpeechChoices.CancelChoices()));
-            //_sre.LoadGrammarAsync(CreateTimeGrammar());
 
             _sre.RecognizeAsync(RecognizeMode.Multiple);
-        }
-
-        private Grammar CreateTimeGrammar()
-        {
-            var setChoices = new Choices("call at", "set it to");
-
-            var morningChoices = new GrammarBuilder(new Choices("am", "in the morning"));
-            morningChoices.Append(new SemanticResultValue(true));
-
-            var eveningChoices = new GrammarBuilder(new Choices("pm", "tonight", "at night"));
-            eveningChoices.Append(new SemanticResultValue(false));
-
-            var amOrPm = new Choices(morningChoices, eveningChoices);
-            var amOrPmKey = new SemanticResultKey("AmPm", amOrPm);
-
-            var hours = new Choices("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "one", "two");
-            var minutes = new Choices("10", "15", "20", "25", "30", "35", "40", "45", "50", "55", "60", "o'clock", " ");
-
-            var timeGrammarBuilder = new GrammarBuilder();
-            timeGrammarBuilder.Append(setChoices);
-            timeGrammarBuilder.Append(new SemanticResultKey("Hours", hours));
-            timeGrammarBuilder.Append(new SemanticResultKey("Minutes", minutes));
-            timeGrammarBuilder.Append(amOrPmKey);
-            return new Grammar(timeGrammarBuilder);
         }
 
         private Grammar CreateGrammar(params string[] choices)
@@ -101,12 +77,15 @@ namespace CFOP.Speech
 
         void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            string txt = e.Result.Text;
-            float confidence = e.Result.Confidence;
+            var txt = e.Result.Text;
+            var confidence = e.Result.Confidence;
+
             Write(string.Empty);
             Write($"Recognized: {txt}");
             Write($"Confidence: {confidence}");
+
             if (confidence < 0.75) return;
+
             if (txt.Contains("Jefrey"))
             {
                 Write("Jefrey got woken!");
@@ -130,12 +109,6 @@ namespace CFOP.Speech
             {
                 _conversations.ForEach(c => c.HandleCommonSpeech(CommonSpeechTypes.Cancel));
             }
-//            else
-//            {
-//                var hours = e.Result.Semantics["Hours"].Value.ToString();
-//                var minutes = e.Result.Semantics["Minutes"].Value.ToString();
-//                var amPm = (bool) e.Result.Semantics["AmPm"].Value;
-//            }
         }
 
         void DoActive()
@@ -242,6 +215,7 @@ namespace CFOP.Speech
         {
             if (disposing)
             {
+                _ss.Dispose();
                 _sre.RecognizeAsyncStop();
                 _sre.Dispose();
                 _microphoneClient.Dispose();
