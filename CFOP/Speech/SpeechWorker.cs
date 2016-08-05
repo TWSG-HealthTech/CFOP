@@ -234,7 +234,19 @@ namespace CFOP.Speech
 
         public void Dispose()
         {
-            _microphoneClient.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _sre.RecognizeAsyncStop();
+                _sre.Dispose();
+                _microphoneClient.Dispose();
+            }
+            // get rid of unmanaged resources
         }
     }
 }
