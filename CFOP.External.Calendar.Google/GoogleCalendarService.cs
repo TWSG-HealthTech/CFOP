@@ -64,7 +64,7 @@ namespace CFOP.External.Calendar.Google
                 calendarList.Items
                             .Where(i => user.Calendar.Google.CalendarNames.Contains(i.Summary))
                             .Select(entry => 
-                                    GetCalendarEvents(service, entry, date))))
+                                    GetCalendarEvents(service, entry, date, user))))
                             .SelectMany(e => e)
                             .OrderBy(e => e.StartTime)
                             .ToList();
@@ -103,15 +103,33 @@ namespace CFOP.External.Calendar.Google
             {
                 Summary = e.Name,
                 Start = new EventDateTime { DateTime = e.StartTime },
-                End = new EventDateTime { DateTime = e.EndTime }
+                End = new EventDateTime { DateTime = e.EndTime },
+                Attendees = new List<EventAttendee>
+                {
+                    new EventAttendee { Email = _applicationSettings.MainUserEmail },
+                    new EventAttendee { Email = user.Calendar.Google.Email }
+                }
             },
             primaryCalendar.Id);
 
-
             await insertRequest.ExecuteAsync();
+
+            InvalidateCache(user.Id, e.StartTime.ToDate());
         }
 
-        private async Task<IEnumerable<CalendarEvent>> GetCalendarEvents(CalendarService service, CalendarListEntry calendar, DateTime date)
+        private void InvalidateCache(int userId, DateTime date)
+        {
+            if (_eventCache.ContainsKey(userId) && _eventCache[userId].ContainsKey(date))
+            {
+                _eventCache[userId].Remove(date);
+            }
+        }
+
+        private async Task<IEnumerable<CalendarEvent>> GetCalendarEvents(
+            CalendarService service, 
+            CalendarListEntry calendar, 
+            DateTime date, 
+            Common.User user)
         {
             var request = service.Events.List(calendar.Id);
             request.TimeMin = date.ToDate();
@@ -127,7 +145,7 @@ namespace CFOP.External.Calendar.Google
 
             return events.Items
                 .Where(eventItem => eventItem.Attendees != null &&
-                    eventItem.Attendees.Any(a => a.Email == _applicationSettings.MainUserEmail))
+                    eventItem.Attendees.Any(a => a.Email == user.Calendar.Google.Email))
                 .Select(eventItem =>
             {
                 var start = ExtractTime(eventItem.Start);
@@ -163,15 +181,15 @@ namespace CFOP.External.Calendar.Google
             var user = _userRepository.FindById(userId);
             if(user == null) throw new ArgumentException($"No user with id {userId} found");
 
-            var credPath = Environment.GetFolderPath(
-                    Environment.SpecialFolder.Personal);
             var calendarSecret = new MemoryStream(Encoding.UTF8.GetBytes(user.Calendar.Google.ClientSecret));
 
-            credPath = Path.Combine(credPath, ".credentials/cfop.json");
+            var credPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.Personal), 
+                ".credentials/cfop.json");
 
             return GoogleWebAuthorizationBroker.AuthorizeAsync(
                 GoogleClientSecrets.Load(calendarSecret).Secrets,
-                new[] { CalendarService.Scope.CalendarReadonly },
+                new[] { CalendarService.Scope.Calendar },
                 "user",
                 CancellationToken.None,
                 new FileDataStore(credPath, true)).Result;

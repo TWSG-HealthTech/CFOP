@@ -13,6 +13,7 @@ namespace CFOP.Service.Common.DTO
         {
             public class GoogleCalendarSettings
             {
+                public string Email { get; set; }
                 [JsonConverter(typeof(CsvToListPropertyConverter))]
                 public List<string> CalendarNames { get; set; }
 

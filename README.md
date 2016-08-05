@@ -16,6 +16,7 @@
       "aliases": [ "son", "other_alias" ],
       "calendar": {
         "google": {
+          "email": "{calendar_email}",
           "calendarNames": "Singapore Events,Blah blah",
           "clientSecret": {google_calendar_secret_file_content}
         }
@@ -27,6 +28,7 @@
       "aliases": [ "daughter", "another_alias ],
       "calendar": {
         "google": {
+          "email": "{calendar_email}",
           "calendarNames": "Singapore Events,Blah blah",
           "clientSecret": {google_calendar_secret_file_content}
         }
