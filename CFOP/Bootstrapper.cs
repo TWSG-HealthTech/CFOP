@@ -60,7 +60,6 @@ namespace CFOP
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>().SingleInstance();
             builder.RegisterType<GoogleCalendarService>().As<IManageCalendarService>().SingleInstance();
             builder.RegisterType<SkypeURIVideoService>().As<IVideoService>().SingleInstance();
-            builder.RegisterType<ManageUserService>().As<IManageUserService>().SingleInstance();
 
             builder.RegisterType<FileBasedUserRepository>().As<IUserRepository>().SingleInstance();
 

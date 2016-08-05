@@ -23,7 +23,7 @@ namespace CFOP.AppointmentSchedule
 
         private readonly IEventAggregator _eventAggregator;
         private readonly IManageCalendarService _manageCalendarService;
-        private readonly IManageUserService _manageUserService;
+        private readonly IUserRepository _userRepository;
         private readonly SpeechSynthesizer _speechSynthesizer;
 
         private string _date;
@@ -35,13 +35,13 @@ namespace CFOP.AppointmentSchedule
 
         public ScheduleConversation(IEventAggregator eventAggregator,
                                     IManageCalendarService manageCalendarService,
-                                    IManageUserService manageUserService,
+                                    IUserRepository userRepository,
                                     SpeechSynthesizer speechSynthesizer)
             :base(new List<string> { "ShowCalendar", "ChooseTime" })
         {
             _eventAggregator = eventAggregator;
             _manageCalendarService = manageCalendarService;
-            _manageUserService = manageUserService;
+            _userRepository = userRepository;
             _speechSynthesizer = speechSynthesizer;
         }
 
@@ -56,7 +56,7 @@ namespace CFOP.AppointmentSchedule
                     _dateResolution = DateTime.ParseExact(dateResolutionValue, "yyyy-MM-dd", new CultureInfo("en-US"));
 
                     _alias = intent.GetFirstIntentActionParameter("ShowCalendar", "person");
-                    _user = _manageUserService.LookUpUserByAlias(_alias);
+                    _user = _userRepository.FindByAlias(_alias);
 
                     Conversation.Fire(ScheduleEvents.ScheduleInitiated);
                     break;

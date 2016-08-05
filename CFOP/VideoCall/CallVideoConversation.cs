@@ -13,7 +13,7 @@ namespace CFOP.VideoCall
     public class CallVideoConversation : StateMachineConversationBase<CallVideoStates, CallVideoEvents>
     {
         private readonly IManageCalendarService _manageCalendarService;
-        private readonly IManageUserService _manageUserService;
+        private readonly IUserRepository _userRepository;
         private readonly IVideoService _videoService;
         private readonly SpeechSynthesizer _speechSynthesizer;
 
@@ -21,13 +21,13 @@ namespace CFOP.VideoCall
         private string _alias;
 
         public CallVideoConversation(IManageCalendarService manageCalendarService,
-                                    IManageUserService manageUserService,
+                                    IUserRepository userRepository,
                                     IVideoService videoService,
                                     SpeechSynthesizer speechSynthesizer)
             :base(new List<string> { "CallVideo" })
         {
             _manageCalendarService = manageCalendarService;
-            _manageUserService = manageUserService;
+            _userRepository = userRepository;
             _videoService = videoService;
             _speechSynthesizer = speechSynthesizer;
         }
@@ -55,7 +55,7 @@ namespace CFOP.VideoCall
         public override void Handle(IntentResponse.Intent intent)
         {
             _alias = intent.GetFirstIntentActionParameter("CallVideo", "person");
-            _currentUser = _manageUserService.LookUpUserByAlias(_alias);
+            _currentUser = _userRepository.FindByAlias(_alias);
 
             Conversation.Fire(CallVideoEvents.CallInitiated, intent);
         }

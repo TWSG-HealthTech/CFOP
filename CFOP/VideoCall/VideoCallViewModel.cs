@@ -11,7 +11,7 @@ namespace CFOP.VideoCall
     public class VideoCallViewModel : BindableBase
     {
         private readonly IVideoService _videoService;
-        private readonly IManageUserService _manageUserService;
+        private readonly IUserRepository _userRepository;
 
         private string _contact;
         public string Contact
@@ -37,10 +37,10 @@ namespace CFOP.VideoCall
             }
         }
 
-        public VideoCallViewModel(IEventAggregator evenAggregator, IVideoService videoService, IManageUserService manageUserService)
+        public VideoCallViewModel(IEventAggregator evenAggregator, IVideoService videoService, IUserRepository userRepository)
         {
             _videoService = videoService;
-            _manageUserService = manageUserService;
+            _userRepository = userRepository;
             IsInCall = false;
 
             VideoCallCommand = new DelegateCommand(VideoCall, 
@@ -51,7 +51,7 @@ namespace CFOP.VideoCall
 
         private void VideoCall(CallVideoEventParameters parameters)
         {
-            var user = _manageUserService.LookUpUserByAlias(parameters.User);
+            var user = _userRepository.FindByAlias(parameters.User);
 
             if (user != null)
             {

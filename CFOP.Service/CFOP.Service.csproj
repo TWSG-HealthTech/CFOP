@@ -64,10 +64,8 @@
   <ItemGroup>
     <Compile Include="AppointmentSchedule\DTO\CalendarEvent.cs" />
     <Compile Include="AppointmentSchedule\IManageCalendarService.cs" />
-    <Compile Include="Common\IManageUserService.cs" />
     <Compile Include="Common\DTO\User.cs" />
     <Compile Include="Common\IUserRepository.cs" />
-    <Compile Include="Common\ManageUserService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VideoCall\IVideoService.cs" />
   </ItemGroup>
