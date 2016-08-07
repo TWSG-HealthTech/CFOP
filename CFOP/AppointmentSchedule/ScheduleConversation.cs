@@ -66,12 +66,28 @@ namespace CFOP.AppointmentSchedule
 
                     var chosenTimeResolutionValue =
                         intent.GetAction("ChooseTime").GetParameter("time").Values.First().GetResolution("time");
-                    _chosenTimeResolution = DateTime.Now.ToDate().AddHours(double.Parse(chosenTimeResolutionValue.Substring(TalkDurationInHours)));
+                    var parsedResolutionValue = StringToHoursAndMinutes(chosenTimeResolutionValue.Substring(TalkDurationInHours));
+                    _chosenTimeResolution = 
+                        DateTime.Now
+                                .ToDate()
+                                .AddHours(parsedResolutionValue.Item1)
+                                .AddMinutes(parsedResolutionValue.Item2);
 
                     Conversation.Fire(ScheduleEvents.TimeslotChosen);
                     break;
             }
             
+        }
+
+        private static Tuple<int, int> StringToHoursAndMinutes(string time)
+        {
+            if (time.IndexOf(':') <= -1)
+            {
+                return Tuple.Create(int.Parse(time), 0);
+            }
+
+            var timeElements = time.Split(':');
+            return Tuple.Create(int.Parse(timeElements[0]), int.Parse(timeElements[1]));
         }
 
         public override void HandleCommonSpeech(CommonSpeechTypes type, object args)
