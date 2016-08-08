@@ -5,6 +5,7 @@ using CFOP.Common;
 using CFOP.External.Calendar.Google;
 using CFOP.External.Video.Skype;
 using CFOP.Infrastructure.JSON;
+using CFOP.Infrastructure.Logging;
 using CFOP.Infrastructure.Settings;
 using CFOP.Repository.Common;
 using CFOP.Service.AppointmentSchedule;
@@ -62,6 +63,8 @@ namespace CFOP
             builder.RegisterType<SkypeURIVideoService>().As<IVideoService>().SingleInstance();
 
             builder.RegisterType<FileBasedUserRepository>().As<IUserRepository>().SingleInstance();
+
+            builder.RegisterType<NLogAdapter>().As<ILogger>().SingleInstance();
 
             ViewModelLocationProvider.SetDefaultViewModelFactory(type => Container.Resolve(type));
         }        
