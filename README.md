@@ -55,6 +55,13 @@
 - Download and install one or many Runtime Languages: https://www.microsoft.com/en-us/download/details.aspx?id=27224
     (One language runtime includes one SR and one TTS file)
 - Open regedit, navigate to `HKEY_CURRENT_USER\Software\Microsoft\Speech`, right click `CurrentUserLexicon` choose `Permissions`. If there is an entry for `ALL APPLICATION PACKAGES`, remove it
+- Open Manage Nuget for solution window, add a package source with settings:
+
+  ```
+  Name: dotnet.myget.org
+  Source: https://dotnet.myget.org/F/aspnetcore-master/api/v3/index.json
+  ```
+  In Manage Nuget for solution window, change package source drop down to `All`
 
 ## Code Structure
 

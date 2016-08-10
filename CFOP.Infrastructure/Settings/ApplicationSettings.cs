@@ -11,5 +11,6 @@ namespace CFOP.Infrastructure.Settings
         public string LuisSubscriptionId { get; } = ConfigurationManager.AppSettings["luisSubscriptionId"];
         public string UsersFilePath { get; } = ConfigurationManager.AppSettings["usersFilePath"];
         public string MainUserEmail { get; } = ConfigurationManager.AppSettings["mainUserEmail"];
+        public string ServerUrl { get; } = ConfigurationManager.AppSettings["serverUrl"];
     }
 }

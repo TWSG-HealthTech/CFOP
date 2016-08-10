@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Windows.Threading;
-using CFOP.AppointmentSchedule;
+using CFOP.Infrastructure.Logging;
 using CFOP.Infrastructure.Settings;
 using CFOP.Speech;
+using Microsoft.AspNet.SignalR.Client;
 using Prism.Commands;
-using Prism.Events;
 using Prism.Mvvm;
 using ICommand = System.Windows.Input.ICommand;
 
@@ -48,10 +48,11 @@ namespace CFOP
         }
         
         private readonly SpeechWorker _speechWorker;
+        private readonly ILogger unknown;
 
         #endregion
 
-        public MainViewModel(SpeechWorker speechWorker)
+        public MainViewModel(SpeechWorker speechWorker, IApplicationSettings applicationSettings, ILogger logger)
         {
             IsInFullScreen = false;
 
@@ -62,6 +63,12 @@ namespace CFOP
             _speechWorker.Write += WriteLine;
             _speechWorker.ShowSpeech += ShowSpeech;
             _speechWorker.Start();
+
+//            var connection = new HubConnection(applicationSettings.ServerUrl);
+//            var hub = connection.CreateHubProxy("calendarHub");
+//            connection.Start().Wait();
+//
+//            hub.On("CalendarChanged", data => logger.Info($"Received {data} from SignalR Server"));
         }
 
         #region Commands    

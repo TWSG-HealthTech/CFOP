@@ -9,5 +9,6 @@
         string LuisSubscriptionId { get; }
         string UsersFilePath { get; }
         string MainUserEmail { get; }
+        string ServerUrl { get; }
     }
 }
