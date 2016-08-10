@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Automation;
 using CFOP.Service.Common.DTO;
 using CFOP.Service.VideoCall;
@@ -28,23 +30,42 @@ namespace CFOP.External.Video.Skype
 
             var thisApplication = Find(() => root.FindFirst(TreeScope.Children,
                 new PropertyCondition(AutomationElement.NameProperty, "CFOP")));
-            var skypeApplication = Find(() => root.FindFirst(TreeScope.Children,
-                new PropertyCondition(AutomationElement.ProcessIdProperty, skypeProcess.Id)));
-            if (skypeApplication == null) return;
+            
+            var skypeConversationForm = FindInDescendant(root,
+                new PropertyCondition(AutomationElement.ProcessIdProperty, skypeProcess.Id),
+                new PropertyCondition(AutomationElement.ClassNameProperty, "TConversationForm"));
+            if (skypeConversationForm == null) return;
 
-            var videoCallMainWindowCondition = new PropertyCondition(AutomationElement.ClassNameProperty,
-                "TConversationForm");
-            var videoCallMainWindow = Find(() => skypeApplication.FindFirst(TreeScope.Children, videoCallMainWindowCondition));
-            if (videoCallMainWindow == null) return;
+            //Wait for events when child elements of this conversation form is added/removed
+            Automation.AddStructureChangedEventHandler(skypeConversationForm, TreeScope.Children, (s, e) => OnStructureChanged(s, e, thisApplication));
+        }
 
-            var videoCallWindowLocation = videoCallMainWindow.Current.BoundingRectangle;
-            do
+        private void OnStructureChanged(object sender, StructureChangedEventArgs arg, AutomationElement thisAppplication)
+        {
+            //If element with class name TChatContentControl is added to conversation form, 
+            //it means the video call is finished and it's back to normal chat interface, 
+            //so switch back to CFOP application
+            var element = sender as AutomationElement;
+            if (arg.StructureChangeType == StructureChangeType.ChildAdded && 
+                element != null && 
+                element.Current.ClassName == "TChatContentControl")
             {
-                Thread.Sleep(1000);
-                videoCallMainWindow = skypeApplication.FindFirst(TreeScope.Children, videoCallMainWindowCondition);
-            } while (videoCallMainWindow.Current.BoundingRectangle == videoCallWindowLocation);
+                thisAppplication.SetFocus();
+            }
+        }
 
-            thisApplication.SetFocus();
+        private static AutomationElement FindInDescendant(AutomationElement root, params PropertyCondition[] conditions)
+        {
+            var current = root;
+            foreach (var condition in conditions)
+            {
+                var foundElement = Find(() => current.FindFirst(TreeScope.Children, condition));
+                if (foundElement == null) return null;
+
+                current = foundElement;
+            }
+
+            return current;
         }
 
         private static AutomationElement Find(Func<AutomationElement> action, int maxLoop = 10)
@@ -57,6 +78,18 @@ namespace CFOP.External.Video.Skype
             }
 
             return element;
+        }
+
+        private static List<AutomationElement> FindAllChildren(AutomationElement parent)
+        {
+            return new List<AutomationElement>(
+                        parent.FindAll(TreeScope.Children, Condition.TrueCondition).Cast<AutomationElement>());
+        }
+
+        private static List<AutomationElement> FindAllDescendants(AutomationElement parent)
+        {
+            return new List<AutomationElement>(
+                        parent.FindAll(TreeScope.Descendants, Condition.TrueCondition).Cast<AutomationElement>());
         }
     }
 }
