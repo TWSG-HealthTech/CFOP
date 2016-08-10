@@ -34,7 +34,18 @@ namespace CFOP
                 _message = value;
                 OnPropertyChanged(() => Message);
             }
-        }               
+        }
+
+        private string _speechText;
+        public string SpeechText
+        {
+            get { return _speechText; }
+            private set
+            {
+                _speechText = value;
+                OnPropertyChanged(() => SpeechText);
+            }
+        }
         
         private readonly SpeechWorker _speechWorker;
 
@@ -49,10 +60,9 @@ namespace CFOP
 
             _speechWorker = speechWorker;
             _speechWorker.Write += WriteLine;
+            _speechWorker.ShowSpeech += ShowSpeech;
             _speechWorker.Start();
         }
-
-
 
         #region Commands    
 
@@ -81,6 +91,14 @@ namespace CFOP
             Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 Message += (text + Environment.NewLine);
+            });
+        }
+
+        private void ShowSpeech(string speech)
+        {
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                SpeechText = speech;
             });
         }
         #endregion

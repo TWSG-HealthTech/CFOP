@@ -34,6 +34,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -54,8 +55,15 @@
                 Margin="10 5" 
                 Width="200"
                 Command="{Binding ToggleFullScreenCommand}">Toggle Full Screen</Button>
+        
+        <TextBox Grid.Row="2"
+                 Grid.Column="0"
+                 HorizontalAlignment="Stretch"
+                 Margin="10 5"
+                 Text="{Binding SpeechText,Mode=OneWay}"
+                 IsReadOnly="True"></TextBox>
 
-        <TextBox Grid.Row="2" 
+        <TextBox Grid.Row="3" 
                  Grid.Column="0"
                  HorizontalAlignment="Stretch" 
                  VerticalAlignment="Stretch" 
@@ -68,7 +76,8 @@
 
         <ContentControl 
             Grid.Row="2"
-            Grid.Column="1" 
+            Grid.Column="1"
+            Grid.RowSpan="2"
             prism:RegionManager.RegionName="{x:Static common:RegionNames.SideRegion}" />
     </Grid>
 </Window>

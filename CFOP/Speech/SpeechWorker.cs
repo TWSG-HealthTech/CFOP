@@ -21,6 +21,7 @@ namespace CFOP.Speech
         private MicrophoneRecognitionClient _microphoneClient;
 
         public event Action<string> Write;
+        public event Action<string> ShowSpeech;
 
         public SpeechWorker(IApplicationSettings applicationSettings,
                             SpeechSynthesizer synthesizer,
@@ -114,9 +115,9 @@ namespace CFOP.Speech
         void DoActive()
         {
             _sre.RecognizeAsyncCancel();
-            _sre.RecognizeAsyncStop();
 
             _microphoneClient.StartMicAndRecognition();
+            ShowSpeech("...");
         }
 
         private void OnMicrophoneStatus(object sender, MicrophoneEventArgs e)
@@ -176,15 +177,19 @@ namespace CFOP.Speech
             Write("--- Partial result received by OnPartialResponseReceivedHandler() ---");
             Write(e.PartialResult);
             Write(string.Empty);
+            ShowSpeech(e.PartialResult + "...");
+
         }
 
         private void OnMicShortPhraseResponseReceivedHandler(object sender, SpeechResponseEventArgs e)
         {
+            _microphoneClient.EndMicAndRecognition();
             Write("--- OnMicShortPhraseResponseReceivedHandler ---");
             Write(e.PhraseResponse.RecognitionStatus.ToString());
             if (e.PhraseResponse.Results.Length == 0)
             {
                 Write("No phrase response is available.");
+                ShowSpeech(string.Empty);
             }
             else
             {
@@ -197,9 +202,8 @@ namespace CFOP.Speech
                 }
 
                 Write(string.Empty);
+                ShowSpeech(e.PhraseResponse.Results[0].DisplayText);
             }
-
-            _microphoneClient.EndMicAndRecognition();
 
             _sre.SetInputToDefaultAudioDevice();
             _sre.RecognizeAsync(RecognizeMode.Multiple);
@@ -216,7 +220,6 @@ namespace CFOP.Speech
             if (disposing)
             {
                 _ss.Dispose();
-                _sre.RecognizeAsyncStop();
                 _sre.Dispose();
                 _microphoneClient.Dispose();
             }
