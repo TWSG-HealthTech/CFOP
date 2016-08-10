@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Appccelerate.StateMachine;
+using CFOP.Common;
 using CFOP.Infrastructure.Settings;
+using CFOP.VideoCall.Events;
 using CFOPIConversation = CFOP.Speech.IConversation;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
 using Microsoft.Speech.Synthesis;
 using Newtonsoft.Json;
+using Prism.Events;
 
 namespace CFOP.Speech
 {
@@ -24,12 +27,16 @@ namespace CFOP.Speech
         public event Action<string> ShowSpeech;
 
         public SpeechWorker(IApplicationSettings applicationSettings,
+                            IEventAggregator eventAggregator,
                             SpeechSynthesizer synthesizer,
                             IList<CFOPIConversation> conversations)
         {
             _applicationSettings = applicationSettings;
             _ss = synthesizer;
             _conversations = conversations;
+
+            eventAggregator.Subscribe<VideoCallStarted, object>(arg => StopLocalSpeechRecognition());
+            eventAggregator.Subscribe<VideoCallStopped, object>(arg => StartLocalSpeechRecognition());
         }
 
         public void Start()
@@ -41,14 +48,13 @@ namespace CFOP.Speech
 
             var ci = new CultureInfo(_applicationSettings.Locale);
             _sre = new SpeechRecognitionEngine(ci);
-            _sre.SetInputToDefaultAudioDevice();
             _sre.SpeechRecognized += OnSpeechRecognized;
 
             _sre.LoadGrammarAsync(CreateGrammar("See Fop", "Jefrey", "Brenda"));
             _sre.LoadGrammarAsync(CreateGrammar(CommonSpeechChoices.ConfirmChoices()));
             _sre.LoadGrammarAsync(CreateGrammar(CommonSpeechChoices.CancelChoices()));
 
-            _sre.RecognizeAsync(RecognizeMode.Multiple);
+            StartLocalSpeechRecognition();
         }
 
         private Grammar CreateGrammar(params string[] choices)
@@ -114,10 +120,21 @@ namespace CFOP.Speech
 
         void DoActive()
         {
-            _sre.RecognizeAsyncCancel();
+            StopLocalSpeechRecognition();
 
             _microphoneClient.StartMicAndRecognition();
             ShowSpeech("...");
+        }
+
+        private void StopLocalSpeechRecognition()
+        {
+            _sre.RecognizeAsyncCancel();
+        }
+
+        private void StartLocalSpeechRecognition()
+        {
+            _sre.SetInputToDefaultAudioDevice();
+            _sre.RecognizeAsync(RecognizeMode.Multiple);
         }
 
         private void OnMicrophoneStatus(object sender, MicrophoneEventArgs e)
@@ -205,8 +222,7 @@ namespace CFOP.Speech
                 ShowSpeech(e.PhraseResponse.Results[0].DisplayText);
             }
 
-            _sre.SetInputToDefaultAudioDevice();
-            _sre.RecognizeAsync(RecognizeMode.Multiple);
+            StartLocalSpeechRecognition();
         }
 
         public void Dispose()

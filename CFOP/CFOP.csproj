@@ -167,6 +167,8 @@
     <Compile Include="VideoCall\CallVideoConversation.cs" />
     <Compile Include="VideoCall\CallVideoEvents.cs" />
     <Compile Include="VideoCall\CallVideoStates.cs" />
+    <Compile Include="VideoCall\Events\VideoCallStarted.cs" />
+    <Compile Include="VideoCall\Events\VideoCallStopped.cs" />
     <Compile Include="VideoCall\VideoCallView.xaml.cs">
       <DependentUpon>VideoCallView.xaml</DependentUpon>
     </Compile>

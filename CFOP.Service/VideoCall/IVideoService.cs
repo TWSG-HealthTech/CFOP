@@ -5,6 +5,6 @@ namespace CFOP.Service.VideoCall
 {
     public interface IVideoService
     {
-        void Call(User user);
+        void Call(User user, Action finishCallback);
     }
 }

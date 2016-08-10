@@ -1,7 +1,10 @@
-﻿using CFOP.Common;
+﻿using System.Windows;
+using System.Windows.Threading;
+using CFOP.Common;
 using CFOP.Service.Common;
 using CFOP.Service.VideoCall;
 using CFOP.Speech.Events;
+using CFOP.VideoCall.Events;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -10,6 +13,7 @@ namespace CFOP.VideoCall
 {
     public class VideoCallViewModel : BindableBase
     {
+        private readonly IEventAggregator _eventAggregator;
         private readonly IVideoService _videoService;
         private readonly IUserRepository _userRepository;
 
@@ -37,8 +41,9 @@ namespace CFOP.VideoCall
             }
         }
 
-        public VideoCallViewModel(IEventAggregator evenAggregator, IVideoService videoService, IUserRepository userRepository)
+        public VideoCallViewModel(IEventAggregator eventAggregator, IVideoService videoService, IUserRepository userRepository)
         {
+            _eventAggregator = eventAggregator;
             _videoService = videoService;
             _userRepository = userRepository;
             IsInCall = false;
@@ -46,7 +51,7 @@ namespace CFOP.VideoCall
             VideoCallCommand = new DelegateCommand(VideoCall, 
                             () => !string.IsNullOrWhiteSpace(Contact) && !IsInCall);
 
-            evenAggregator.SubscribeVoiceEvent<CallVideoEventParameters>(VideoCall);
+            _eventAggregator.SubscribeVoiceEvent<CallVideoEventParameters>(VideoCall);
         }
 
         private void VideoCall(CallVideoEventParameters parameters)
@@ -55,9 +60,18 @@ namespace CFOP.VideoCall
 
             if (user != null)
             {
-                //IsInCall = true;
-                _videoService.Call(user);
+                IsInCall = true;
+
+                _eventAggregator.Publish<VideoCallStarted>();
+                _videoService.Call(user, FinishVideoCall);
             }
+        }
+
+        private void FinishVideoCall()
+        {
+            Application.Current.Dispatcher.Invoke(() => IsInCall = false);
+
+            _eventAggregator.Publish<VideoCallStopped>();
         }
 
         #region Commands

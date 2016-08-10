@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using Appccelerate.StateMachine;
+using CFOP.Common;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.Common;
 using CFOP.Service.Common.DTO;
 using CFOP.Service.VideoCall;
 using CFOP.Speech;
+using CFOP.VideoCall.Events;
 using Microsoft.Speech.Synthesis;
+using Prism.Events;
 
 namespace CFOP.VideoCall
 {
@@ -15,6 +18,7 @@ namespace CFOP.VideoCall
         private readonly IManageCalendarService _manageCalendarService;
         private readonly IUserRepository _userRepository;
         private readonly IVideoService _videoService;
+        private readonly IEventAggregator _eventAggregator;
         private readonly SpeechSynthesizer _speechSynthesizer;
 
         private User _currentUser;
@@ -23,12 +27,14 @@ namespace CFOP.VideoCall
         public CallVideoConversation(IManageCalendarService manageCalendarService,
                                     IUserRepository userRepository,
                                     IVideoService videoService,
+                                    IEventAggregator eventAggregator,
                                     SpeechSynthesizer speechSynthesizer)
             :base(new List<string> { "CallVideo" })
         {
             _manageCalendarService = manageCalendarService;
             _userRepository = userRepository;
             _videoService = videoService;
+            _eventAggregator = eventAggregator;
             _speechSynthesizer = speechSynthesizer;
         }
 
@@ -80,7 +86,9 @@ namespace CFOP.VideoCall
         private void Call()
         {
             _speechSynthesizer.Speak("Calling");
-            _videoService.Call(_currentUser);
+            _eventAggregator.Publish<VideoCallStarted>();
+            _videoService.Call(_currentUser, 
+                               () => _eventAggregator.Publish<VideoCallStopped>());
         }
 
         private void Reset()

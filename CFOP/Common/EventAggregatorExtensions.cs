@@ -6,6 +6,11 @@ namespace CFOP.Common
 {
     public static class EventAggregatorExtensions
     {
+        public static void Publish<TEvent>(this IEventAggregator eventAggregator) where TEvent : PubSubEvent<object>, new()
+        {
+            eventAggregator.GetEvent<TEvent>().Publish(null);
+        }
+
         public static void Publish<TEvent, TArgs>(this IEventAggregator eventAggregator, TArgs parameters) where TEvent : PubSubEvent<TArgs>, new()
         {
             eventAggregator.GetEvent<TEvent>().Publish(parameters);

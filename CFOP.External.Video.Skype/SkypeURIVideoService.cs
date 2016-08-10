@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Windows;
 using System.Windows.Automation;
 using CFOP.Service.Common.DTO;
 using CFOP.Service.VideoCall;
@@ -12,14 +11,14 @@ namespace CFOP.External.Video.Skype
 {
     public class SkypeURIVideoService : IVideoService
     {
-        public void Call(User user)
+        public void Call(User user, Action finishCallback)
         {
             Process.Start($"skype:{user.Skype}?call&video=true");
 
-            WaitForCallToFinishAndSwitchBack();
+            WaitForCallToFinishAndSwitchBack(finishCallback);
         }
 
-        private void WaitForCallToFinishAndSwitchBack()
+        private static void WaitForCallToFinishAndSwitchBack(Action finishCallback)
         {
             var skypeProcess =
                 Process.GetProcessesByName("Skype").FirstOrDefault(s => !string.IsNullOrWhiteSpace(s.MainWindowTitle));
@@ -36,11 +35,11 @@ namespace CFOP.External.Video.Skype
                 new PropertyCondition(AutomationElement.ClassNameProperty, "TConversationForm"));
             if (skypeConversationForm == null) return;
 
-            //Wait for events when child elements of this conversation form is added/removed
-            Automation.AddStructureChangedEventHandler(skypeConversationForm, TreeScope.Children, (s, e) => OnStructureChanged(s, e, thisApplication));
+            //Wait for events when child elements of this conversation form are added/removed
+            Automation.AddStructureChangedEventHandler(skypeConversationForm, TreeScope.Children, (s, e) => OnStructureChanged(s, e, thisApplication, finishCallback));
         }
 
-        private void OnStructureChanged(object sender, StructureChangedEventArgs arg, AutomationElement thisAppplication)
+        private static void OnStructureChanged(object sender, StructureChangedEventArgs arg, AutomationElement thisAppplication, Action finishCallback)
         {
             //If element with class name TChatContentControl is added to conversation form, 
             //it means the video call is finished and it's back to normal chat interface, 
@@ -51,6 +50,7 @@ namespace CFOP.External.Video.Skype
                 element.Current.ClassName == "TChatContentControl")
             {
                 thisAppplication.SetFocus();
+                finishCallback();
             }
         }
 
@@ -75,6 +75,9 @@ namespace CFOP.External.Video.Skype
             while (element == null && currentCount < maxLoop)
             {
                 element = action();
+
+                currentCount++;
+                Thread.Sleep(100);
             }
 
             return element;

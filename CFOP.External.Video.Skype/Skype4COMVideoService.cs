@@ -1,4 +1,5 @@
-﻿using CFOP.Service.VideoCall;
+﻿using System;
+using CFOP.Service.VideoCall;
 using SKYPE4COMLib;
 using Common = CFOP.Service.Common.DTO;
 
@@ -24,7 +25,7 @@ namespace CFOP.External.Video.Skype
             return skype;
         }
 
-        public void Call(Common.User user)
+        public void Call(Common.User user, Action finishCallback)
         {
             AttachToSkype();
 
