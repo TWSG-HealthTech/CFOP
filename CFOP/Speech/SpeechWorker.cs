@@ -41,7 +41,6 @@ namespace CFOP.Speech
 
         public void Start()
         {
-            SetupActiveListener();
             _ss.SetOutputToDefaultAudioDevice();
             Write("(Speaking: I am awake)");
             _ss.Speak("I am awake");
@@ -64,6 +63,7 @@ namespace CFOP.Speech
 
         private void SetupActiveListener()
         {
+            _microphoneClient?.Dispose();
             _microphoneClient = SpeechRecognitionServiceFactory.CreateMicrophoneClientWithIntent(
                 _applicationSettings.Locale,
                 _applicationSettings.PrimaryKey,
@@ -121,7 +121,7 @@ namespace CFOP.Speech
         void DoActive()
         {
             StopLocalSpeechRecognition();
-
+            SetupActiveListener();
             _microphoneClient.StartMicAndRecognition();
             ShowSpeech("...");
         }
@@ -203,6 +203,8 @@ namespace CFOP.Speech
             _microphoneClient.EndMicAndRecognition();
             Write("--- OnMicShortPhraseResponseReceivedHandler ---");
             Write(e.PhraseResponse.RecognitionStatus.ToString());
+            _microphoneClient.Dispose();
+            _microphoneClient = null;
             if (e.PhraseResponse.Results.Length == 0)
             {
                 Write("No phrase response is available.");
@@ -237,7 +239,7 @@ namespace CFOP.Speech
             {
                 _ss.Dispose();
                 _sre.Dispose();
-                _microphoneClient.Dispose();
+                _microphoneClient?.Dispose();
             }
             // get rid of unmanaged resources
         }
