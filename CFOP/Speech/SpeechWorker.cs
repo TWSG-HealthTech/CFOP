@@ -42,7 +42,7 @@ namespace CFOP.Speech
         public void Start()
         {
             _ss.SetOutputToDefaultAudioDevice();
-            Write("(Speaking: I am awake)");
+            Write?.Invoke("(Speaking: I am awake)");
             _ss.Speak("I am awake");
 
             var ci = new CultureInfo(_applicationSettings.Locale);
@@ -87,25 +87,25 @@ namespace CFOP.Speech
             var txt = e.Result.Text;
             var confidence = e.Result.Confidence;
 
-            Write(string.Empty);
-            Write($"Recognized: {txt}");
-            Write($"Confidence: {confidence}");
+            Write?.Invoke(string.Empty);
+            Write?.Invoke($"Recognized: {txt}");
+            Write?.Invoke($"Confidence: {confidence}");
 
             if (confidence < 0.75) return;
 
             if (txt.Contains("Jefrey"))
             {
-                Write("Jefrey got woken!");
+                Write?.Invoke("Jefrey got woken!");
                 _ss.Speak("Go away, I'm busy!");
             }
             else if (txt.Contains("Brenda"))
             {
-                Write("Brenda got woken!");
+                Write?.Invoke("Brenda got woken!");
                 DoActive();
             }
             else if (txt.Contains("See Fop"))
             {
-                Write("CFOP got woken!");
+                Write?.Invoke("CFOP got woken!");
                 _ss.Speak("Don't worry, you're not that old!");
             }
             else if (CommonSpeechChoices.ConfirmChoices().Any(c => c == txt))
@@ -123,7 +123,7 @@ namespace CFOP.Speech
             StopLocalSpeechRecognition();
             SetupActiveListener();
             _microphoneClient.StartMicAndRecognition();
-            ShowSpeech("...");
+            ShowSpeech?.Invoke("...");
         }
 
         private void StopLocalSpeechRecognition()
@@ -139,21 +139,21 @@ namespace CFOP.Speech
 
         private void OnMicrophoneStatus(object sender, MicrophoneEventArgs e)
         {
-            Write("--- Microphone status change received by OnMicrophoneStatus() ---");
-            Write($"********* Microphone status: {e.Recording} *********");
+            Write?.Invoke("--- Microphone status change received by OnMicrophoneStatus() ---");
+            Write?.Invoke($"********* Microphone status: {e.Recording} *********");
             if (e.Recording)
             {
-                Write("Listening...");
+                Write?.Invoke("Listening...");
             }
 
-            Write(string.Empty);
+            Write?.Invoke(string.Empty);
         }
 
         private void OnIntentHandler(object sender, SpeechIntentEventArgs e)
         {
-            Write("--- Intent received by OnIntentHandler() ---");
-            Write(e.Payload);
-            Write(string.Empty);
+            Write?.Invoke("--- Intent received by OnIntentHandler() ---");
+            Write?.Invoke(e.Payload);
+            Write?.Invoke(string.Empty);
             HandlePayload(e.Payload);
         }
 
@@ -183,45 +183,45 @@ namespace CFOP.Speech
 
         private void OnConversationErrorHandler(object sender, SpeechErrorEventArgs e)
         {
-            Write("--- Error received by OnConversationErrorHandler() ---");
-            Write($"Error code: {e.SpeechErrorCode}");
-            Write($"Error text: {e.SpeechErrorText}");
-            Write(string.Empty);
+            Write?.Invoke("--- Error received by OnConversationErrorHandler() ---");
+            Write?.Invoke($"Error code: {e.SpeechErrorCode}");
+            Write?.Invoke($"Error text: {e.SpeechErrorText}");
+            Write?.Invoke(string.Empty);
         }
 
         private void OnPartialResponseReceivedHandler(object sender, PartialSpeechResponseEventArgs e)
         {
-            Write("--- Partial result received by OnPartialResponseReceivedHandler() ---");
-            Write(e.PartialResult);
-            Write(string.Empty);
-            ShowSpeech(e.PartialResult + "...");
+            Write?.Invoke("--- Partial result received by OnPartialResponseReceivedHandler() ---");
+            Write?.Invoke(e.PartialResult);
+            Write?.Invoke(string.Empty);
+            ShowSpeech?.Invoke(e.PartialResult + "...");
 
         }
 
         private void OnMicShortPhraseResponseReceivedHandler(object sender, SpeechResponseEventArgs e)
         {
             _microphoneClient.EndMicAndRecognition();
-            Write("--- OnMicShortPhraseResponseReceivedHandler ---");
-            Write(e.PhraseResponse.RecognitionStatus.ToString());
             _microphoneClient.Dispose();
             _microphoneClient = null;
+            Write?.Invoke("--- OnMicShortPhraseResponseReceivedHandler ---");
+            Write?.Invoke(e.PhraseResponse.RecognitionStatus.ToString());
             if (e.PhraseResponse.Results.Length == 0)
             {
-                Write("No phrase response is available.");
-                ShowSpeech(string.Empty);
+                Write?.Invoke("No phrase response is available.");
+                ShowSpeech?.Invoke(string.Empty);
             }
             else
             {
-                Write("********* Final n-BEST Results *********");
+                Write?.Invoke("********* Final n-BEST Results *********");
 
                 for (int i = 0; i < e.PhraseResponse.Results.Length; i++)
                 {
-                    Write(
+                    Write?.Invoke(
                         $"[{i}] Confidence={e.PhraseResponse.Results[i].Confidence}, Text=\"{e.PhraseResponse.Results[i].DisplayText}\"");
                 }
 
-                Write(string.Empty);
-                ShowSpeech(e.PhraseResponse.Results[0].DisplayText);
+                Write?.Invoke(string.Empty);
+                ShowSpeech?.Invoke(e.PhraseResponse.Results[0].DisplayText);
             }
 
             StartLocalSpeechRecognition();
