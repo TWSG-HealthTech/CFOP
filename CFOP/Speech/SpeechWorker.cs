@@ -41,6 +41,8 @@ namespace CFOP.Speech
 
         public void Start()
         {
+            SetupActiveListener();
+
             _ss.SetOutputToDefaultAudioDevice();
             Write?.Invoke("(Speaking: I am awake)");
             _ss.Speak("I am awake");
@@ -53,6 +55,7 @@ namespace CFOP.Speech
             _sre.LoadGrammarAsync(CreateGrammar(CommonSpeechChoices.ConfirmChoices()));
             _sre.LoadGrammarAsync(CreateGrammar(CommonSpeechChoices.CancelChoices()));
 
+            _sre.SetInputToDefaultAudioDevice();
             StartLocalSpeechRecognition();
         }
 
@@ -121,7 +124,6 @@ namespace CFOP.Speech
         void DoActive()
         {
             StopLocalSpeechRecognition();
-            SetupActiveListener();
             _microphoneClient.StartMicAndRecognition();
             ShowSpeech?.Invoke("...");
         }
@@ -133,7 +135,6 @@ namespace CFOP.Speech
 
         private void StartLocalSpeechRecognition()
         {
-            _sre.SetInputToDefaultAudioDevice();
             _sre.RecognizeAsync(RecognizeMode.Multiple);
         }
 
@@ -201,8 +202,6 @@ namespace CFOP.Speech
         private void OnMicShortPhraseResponseReceivedHandler(object sender, SpeechResponseEventArgs e)
         {
             _microphoneClient.EndMicAndRecognition();
-            _microphoneClient.Dispose();
-            _microphoneClient = null;
             Write?.Invoke("--- OnMicShortPhraseResponseReceivedHandler ---");
             Write?.Invoke(e.PhraseResponse.RecognitionStatus.ToString());
             if (e.PhraseResponse.Results.Length == 0)
