@@ -124,6 +124,7 @@ namespace CFOP.Speech
         void DoActive()
         {
             StopLocalSpeechRecognition();
+            SetupActiveListener();
             _microphoneClient.StartMicAndRecognition();
             ShowSpeech?.Invoke("...");
         }
@@ -163,9 +164,14 @@ namespace CFOP.Speech
             var response = JsonConvert.DeserializeObject<IntentResponse>(payload);
             var intent = response.Intents.First();
             var intentName = intent.Name;
+
             if (intentName == "TellJoke")
             {
                 _ss.Speak("What wobbles in the sky? A jellycopter!");
+            }
+            else if (intentName == "ThankYou")
+            {
+                _ss.Speak("You're most welcome!");
             }
             else if (intentName == "BuyStuff" && intent.IsActionTriggered("BuyStuff"))
             {
@@ -196,7 +202,6 @@ namespace CFOP.Speech
             Write?.Invoke(e.PartialResult);
             Write?.Invoke(string.Empty);
             ShowSpeech?.Invoke(e.PartialResult + "...");
-
         }
 
         private void OnMicShortPhraseResponseReceivedHandler(object sender, SpeechResponseEventArgs e)
