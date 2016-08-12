@@ -25,7 +25,7 @@
     {
       "id": 2,
       "skype": "{second_skype_id}",
-      "aliases": [ "daughter", "another_alias ],
+      "aliases": [ "daughter", "another_alias" ],
       "calendar": {
         "google": {
           "email": "{calendar_email}",
