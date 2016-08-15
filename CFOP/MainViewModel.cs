@@ -2,6 +2,7 @@
 using System.Windows.Threading;
 using CFOP.Infrastructure.Logging;
 using CFOP.Infrastructure.Settings;
+using CFOP.Repository.Data;
 using CFOP.Speech;
 using Microsoft.AspNet.SignalR.Client;
 using Prism.Commands;
@@ -48,7 +49,6 @@ namespace CFOP
         }
         
         private readonly SpeechWorker _speechWorker;
-        private readonly ILogger unknown;
 
         #endregion
 
@@ -58,6 +58,7 @@ namespace CFOP
 
             ToggleFullScreenCommand = new DelegateCommand(ToggleFullScreen);
             ExitFullScreenCommand = new DelegateCommand(ExitFullScreen);
+            SeedDataCommand = new DelegateCommand(SeedData);
 
             _speechWorker = speechWorker;
             _speechWorker.Write += WriteLine;
@@ -88,6 +89,13 @@ namespace CFOP
         private void ToggleFullScreen()
         {
             IsInFullScreen = !IsInFullScreen;
+        }
+
+        public ICommand SeedDataCommand { get; private set; }
+
+        private void SeedData()
+        {
+            Store.Seed();
         }
 
         #endregion
