@@ -171,6 +171,10 @@ namespace CFOP.Speech
             {
                 _ss.Speak($"OK, I'll add {intent.GetFirstIntentActionParameter("BuyStuff", "thing")} to your shopping!");
             }
+            else if (intentName == "ThankYou")
+            {
+                _ss.Speak("You're most welcome!");
+            }
             else if (_conversations.Any(c => c.CanHandle(intent)))
             {
                 var conversation = _conversations.FirstOrDefault(c => c.CanHandle(intent));

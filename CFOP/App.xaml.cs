@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using CFOP.Repository.Data;
 
 namespace CFOP
 {
@@ -15,6 +16,7 @@ namespace CFOP
     {
         public App()
         {
+            Initialiser.Init();
             var bootstrapper = new Bootstrapper();
             bootstrapper.Run();
         }
