@@ -173,6 +173,11 @@ namespace CFOP.Speech
             {
                 _ss.Speak("You're most welcome!");
             }
+            else if (intentName == "ShowSocialClubs")
+            {
+                _ss.Speak("Please wait a moment while I look for social clubs nearby.");
+                _ss.Speak("I could not find any social clubs nearby.");
+            }
             else if (intentName == "BuyStuff" && intent.IsActionTriggered("BuyStuff"))
             {
                 _ss.Speak($"OK, I'll add {intent.GetFirstIntentActionParameter("BuyStuff", "thing")} to your shopping!");

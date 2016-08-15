@@ -24,6 +24,9 @@
     },
     {
       "name": "ThankYou"
+    },
+    {
+      "name": "ShowSocialClubs"
     }
   ],
   "entities": [
@@ -922,6 +925,52 @@
           "endPos": 4
         }
       ]
+    },
+    {
+      "text": "show me social clubs",
+      "intent": "ShowSocialClubs",
+      "entities": []
+    },
+    {
+      "text": "show social clubs nearby",
+      "intent": "ShowSocialClubs",
+      "entities": []
+    },
+    {
+      "text": "what social gatherings are around me",
+      "intent": "ShowSocialClubs",
+      "entities": []
+    },
+    {
+      "text": "brenda buy some bananas",
+      "intent": "BuyStuff",
+      "entities": [
+        {
+          "entity": "Item",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "are there any social clubs near me",
+      "intent": "ShowSocialClubs",
+      "entities": []
+    },
+    {
+      "text": "i want to see social gatherings around me",
+      "intent": "ShowSocialClubs",
+      "entities": []
+    },
+    {
+      "text": "are there social activities around me",
+      "intent": "ShowSocialClubs",
+      "entities": []
+    },
+    {
+      "text": "find me nearby social clubs",
+      "intent": "ShowSocialClubs",
+      "entities": []
     }
   ]
 }
