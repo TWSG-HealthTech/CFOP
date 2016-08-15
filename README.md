@@ -63,6 +63,14 @@
   ```
   In Manage Nuget for solution window, change package source drop down to `All`
 
+## Run CFOP Server
+- `CFOP.Server` project is used as intermediate server that stands between CFOP and Google Calendar. It will receive push notification from Google Calendar and in turn notifies CFOP through WebSocket (using SignalR library)
+- To test sending message from Server to CFOP:
+  - Right click solution CFOP, choose Properties. In Startup project, choose Multiple Startup Projects, set `CFOP` and `CFOP.Server` Action to `Start`
+  - Run the solution.
+  - In CFOP, click `Connect to Server` to let CFOP receive notification from server
+  - In the default web page opened by VS, enter any text and send to CFOP 
+
 ## Code Structure
 
 - The project uses Prism region to separate view into different UserControls. Once the application is started, Prism will load UserControl into region in MainWindow according to mapping in Bootstrapper class, .e.g.:

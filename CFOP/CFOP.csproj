@@ -257,6 +257,8 @@
     <Compile Include="AppointmentSchedule\ScheduleConversation.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Common\EventAggregatorExtensions.cs" />
+    <Compile Include="Common\UI\BoolToValueConverter.cs" />
+    <Compile Include="Common\UI\SwitchBindingExtension.cs" />
     <Compile Include="Speech\CommonSpeechTypes.cs" />
     <Compile Include="Speech\IConversation.cs" />
     <Compile Include="Common\RegionNames.cs" />

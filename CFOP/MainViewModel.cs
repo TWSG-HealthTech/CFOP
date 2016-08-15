@@ -64,12 +64,6 @@ namespace CFOP
             _speechWorker.Write += WriteLine;
             _speechWorker.ShowSpeech += ShowSpeech;
             _speechWorker.Start();
-
-//            var connection = new HubConnection(applicationSettings.ServerUrl);
-//            var hub = connection.CreateHubProxy("calendarHub");
-//            connection.Start().Wait();
-//
-//            hub.On("CalendarChanged", data => logger.Info($"Received {data} from SignalR Server"));
         }
 
         #region Commands    

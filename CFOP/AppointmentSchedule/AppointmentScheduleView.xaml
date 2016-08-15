@@ -3,14 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:CFOP.AppointmentSchedule"
+             xmlns:helper="clr-namespace:CFOP.Common.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <helper:BoolToStringConverter x:Key="BoolToButtonContentConverter" FalseValue="Connect to server" TrueValue="Disconnect from server" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0"                 
@@ -40,5 +45,20 @@
                 <DataGridTextColumn Width="100" Header="End" Binding="{Binding EndTime,Mode=OneWay, StringFormat='T'}"></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <Button Margin="10 5" 
+                Grid.Row="3"
+                DockPanel.Dock="Right"
+                Command="{Binding ToggleServerConnectionCommand}"
+                Content="{Binding Connected, Converter={StaticResource BoolToButtonContentConverter}}"></Button>
+
+        <DockPanel Grid.Row="4" LastChildFill="True" Margin="10 0">
+            <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left">Received</TextBlock>
+            <TextBox IsReadOnly="True" 
+                     Margin="10 5" 
+                     DockPanel.Dock="Right"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding ReceivedMessage}"></TextBox>
+        </DockPanel>
     </Grid>
 </UserControl>

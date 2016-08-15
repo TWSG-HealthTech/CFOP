@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CFOP.Server.Hubs;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +25,7 @@ namespace CFOP.Server
         {
             // Add framework services.
             services.AddMvc();
+            services.AddSession();
 
             services.AddSignalR(options =>
             {
@@ -43,9 +39,20 @@ namespace CFOP.Server
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseWebSockets();
+            app.UseSession();
             app.UseSignalR();
 
-            app.UseMvc();
+            app.UseMvc(routes => routes.MapRoute(
+                name: "default",
+                template: "{controller}/{action}/{id?}",
+                defaults: new { controller = "Home", action = "Index" })
+            );
         }
     }
 }

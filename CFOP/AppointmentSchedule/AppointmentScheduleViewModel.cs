@@ -3,9 +3,11 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using CFOP.Common;
+using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.DTO;
 using CFOP.Speech.Events;
+using Microsoft.AspNet.SignalR.Client;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -39,22 +41,51 @@ namespace CFOP.AppointmentSchedule
             }
         }
 
+        private string _receivedMessage;
+        public string ReceivedMessage
+        {
+            get { return _receivedMessage; }
+            set
+            {
+                _receivedMessage = value;
+                OnPropertyChanged(() => ReceivedMessage);
+            }
+        }
+
+        private bool _connected;
+        public bool Connected
+        {
+            get { return _connected; }
+            set
+            {
+                _connected = value;
+                OnPropertyChanged(() => Connected);
+            }
+        }
+
         public ObservableCollection<CalendarEvent> TodayEvents { get; } = new ObservableCollection<CalendarEvent>();
         private readonly IEventAggregator _eventAggregator;
         private readonly IManageCalendarService _manageCalendarService;
+        private readonly IApplicationSettings _applicationSettings;
         private SubscriptionToken _subscriptionToken;
+        private IHubProxy _hub;
+        private HubConnection _connection;
 
         #endregion
 
-        public AppointmentScheduleViewModel(IEventAggregator eventAggregator, IManageCalendarService manageCalendarService)
+        public AppointmentScheduleViewModel(IEventAggregator eventAggregator, 
+                                            IManageCalendarService manageCalendarService,
+                                            IApplicationSettings applicationSettings)
         {
             IsIdle = true;
             UserAlias = "son";
             
             GetTodayScheduleCommand = DelegateCommand.FromAsyncHandler(() => GetTodaySchedule(UserAlias, DateTime.Now), () => !string.IsNullOrWhiteSpace(UserAlias));
+            ToggleServerConnectionCommand = DelegateCommand.FromAsyncHandler(ToggleServerConnection);
 
             _eventAggregator = eventAggregator;
             _manageCalendarService = manageCalendarService;
+            _applicationSettings = applicationSettings;
 
             BindingOperations.EnableCollectionSynchronization(TodayEvents, new object());
 
@@ -67,6 +98,34 @@ namespace CFOP.AppointmentSchedule
         }
 
         #region Commands
+
+        public DelegateCommand ToggleServerConnectionCommand { get; private set; }
+
+        private async Task ToggleServerConnection()
+        {
+            if (Connected)
+            {
+                await _hub?.Invoke("Disconnect");
+                _connection.Stop();
+                _hub = null;
+            }
+            else
+            {
+                _connection = new HubConnection(_applicationSettings.ServerUrl);
+                _hub = _connection.CreateHubProxy("calendarHub");
+                await _connection.Start();
+
+                _hub.On("CalendarChanged", OnCalendarChanged);
+                await _hub.Invoke("Connect");
+            }
+
+            Connected = !Connected;
+        }
+
+        private void OnCalendarChanged(dynamic data)
+        {
+            ReceivedMessage = data;
+        }
 
         public DelegateCommand GetTodayScheduleCommand { get; private set; }
 
