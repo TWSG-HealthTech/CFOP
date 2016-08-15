@@ -254,3 +254,5 @@ paket-files/
 
 *.secret.config
 users.json
+
+PublishProfiles/

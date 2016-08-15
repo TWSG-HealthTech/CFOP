@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using CFOP.Common;
@@ -112,6 +113,13 @@ namespace CFOP.AppointmentSchedule
             else
             {
                 _connection = new HubConnection(_applicationSettings.ServerUrl);
+
+                /* Enable to debug SignalR connection 
+                var writer = new StreamWriter("logs/server.log") {AutoFlush = true};
+                _connection.TraceLevel = TraceLevels.All;
+                _connection.TraceWriter = writer;
+                */
+
                 _hub = _connection.CreateHubProxy("calendarHub");
                 await _connection.Start();
 

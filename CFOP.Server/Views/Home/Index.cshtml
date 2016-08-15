@@ -6,7 +6,7 @@
             <div class="panel-body">
                 <form method="post">
                     <input type="text" name="text"/>
-                    <input type="submit" value="Send to all clients"/>
+                    <input type="submit" class="btn btn-primary" value="Send to all clients"/>
                 </form>
                 @if (TempData["Message"] != null)
                 {
@@ -43,7 +43,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <input type="button" value="Refresh" onclick="location.href = location.href"/>
+                <input type="button" class="btn btn-default" value="Refresh" onclick="location.href = location.href"/>
             </div>
         </div>
     </div>
