@@ -48,10 +48,8 @@ namespace CFOP.Repository.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>()
-                .Ignore(u => u.Calendar)
                 .Ignore(u => u.Aliases)
-                .Property(u => u.Id)
-                .ValueGeneratedOnAdd();
+                .Property(u => u.Id).ValueGeneratedOnAdd();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

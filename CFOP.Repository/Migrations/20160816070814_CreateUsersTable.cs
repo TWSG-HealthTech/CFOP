@@ -14,8 +14,10 @@ namespace CFOP.Repository.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Autoincrement", true),
+                    CalendarClientSecret = table.Column<string>(nullable: true),
+                    CalendarEmail = table.Column<string>(nullable: true),
+                    CalendarNames = table.Column<string>(nullable: true),
                     SerializedAliases = table.Column<string>(nullable: true),
-                    SerializedCalendar = table.Column<string>(nullable: true),
                     Skype = table.Column<string>(nullable: true)
                 },
                 constraints: table =>

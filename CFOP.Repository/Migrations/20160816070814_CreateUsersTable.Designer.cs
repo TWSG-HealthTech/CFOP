@@ -8,7 +8,7 @@ using CFOP.Repository.Data;
 namespace CFOP.Repository.Migrations
 {
     [DbContext(typeof(CateContext))]
-    [Migration("20160816041017_CreateUsersTable")]
+    [Migration("20160816070814_CreateUsersTable")]
     partial class CreateUsersTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,9 +33,13 @@ namespace CFOP.Repository.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("SerializedAliases");
+                    b.Property<string>("CalendarClientSecret");
 
-                    b.Property<string>("SerializedCalendar");
+                    b.Property<string>("CalendarEmail");
+
+                    b.Property<string>("CalendarNames");
+
+                    b.Property<string>("SerializedAliases");
 
                     b.Property<string>("Skype");
 

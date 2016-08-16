@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CFOP.Infrastructure.Helpers;
 using CFOP.Infrastructure.JSON;
 using Newtonsoft.Json;
 
@@ -8,49 +9,39 @@ namespace CFOP.Service.Common.Models
 {
     public class User
     {
-        public class CalendarSettings
-        {
-            public class GoogleCalendarSettings
-            {
-                public string Email { get; set; }
-                [JsonConverter(typeof(CsvToListPropertyConverter))]
-                public List<string> CalendarNames { get; set; }
-
-                [JsonConverter(typeof(JsonObjectAsStringConverter))]
-                public string ClientSecret { get; set; }
-            }
-
-            public GoogleCalendarSettings Google { get; set; }
-        }
-
         public int Id { get; private set; }
         public string Skype { get; private set; }
         public IList<string> Aliases { get; private set; }
-        public CalendarSettings Calendar { get; private set; }
+        public string CalendarEmail { get; private set; }
+        public string CalendarNames { get; private set; }
+
+        [JsonConverter(typeof(JsonObjectAsStringConverter))]
+        public string CalendarClientSecret { get; private set; }
 
         [JsonIgnore]
         public string SerializedAliases
         {
-            get { return JsonConvert.SerializeObject(Aliases); }
-            set { Aliases = JsonConvert.DeserializeObject<List<string>>(value); }
-        }
-
-        [JsonIgnore]
-        public string SerializedCalendar
-        {
-            get { return JsonConvert.SerializeObject(Calendar); }
-            set { Calendar = JsonConvert.DeserializeObject<CalendarSettings>(value); }
+            get { return string.Join(",", Aliases); }
+            set { Aliases = value.CSVToList(); }
         }
 
         [JsonConstructor]
-        public User(int id, string skype, IList<string> aliases, CalendarSettings calendar)
+        public User(int id, 
+                    string skype, 
+                    IList<string> aliases, 
+                    string calendarEmail, 
+                    string calendarNames, 
+                    string calendarClientSecret)
         {
             Id = id;
             Skype = skype;
             Aliases = aliases;
-            Calendar = calendar;
+            CalendarEmail = calendarEmail;
+            CalendarNames = calendarNames;
+            CalendarClientSecret = calendarClientSecret;
         }
 
+        // For EF
         private User() { }
 
         public bool HasAlias(string alias)

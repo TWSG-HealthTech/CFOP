@@ -32,9 +32,13 @@ namespace CFOP.Repository.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("SerializedAliases");
+                    b.Property<string>("CalendarClientSecret");
 
-                    b.Property<string>("SerializedCalendar");
+                    b.Property<string>("CalendarEmail");
+
+                    b.Property<string>("CalendarNames");
+
+                    b.Property<string>("SerializedAliases");
 
                     b.Property<string>("Skype");
 

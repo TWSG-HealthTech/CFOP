@@ -68,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\DateTimeExtensions.cs" />
+    <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="JSON\CsvToListPropertyConverter.cs" />
     <Compile Include="JSON\JsonObjectAsStringConverter.cs" />
     <Compile Include="JSON\PrivateSetterContractResolver.cs" />

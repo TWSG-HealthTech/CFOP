@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,9 +59,10 @@ namespace CFOP.External.Calendar.Google
 
             var calendarRequest = service.CalendarList.List();
             var calendarList = await calendarRequest.ExecuteAsync();
+            var preferredCalendars = user.CalendarNames.CSVToList();
             var events = (await Task.WhenAll(
                 calendarList.Items
-                            .Where(i => user.Calendar.Google.CalendarNames.Contains(i.Summary))
+                            .Where(i => preferredCalendars.Contains(i.Summary))
                             .Select(entry => 
                                     GetCalendarEvents(service, entry, date, user))))
                             .SelectMany(e => e)
@@ -107,7 +107,7 @@ namespace CFOP.External.Calendar.Google
                 Attendees = new List<EventAttendee>
                 {
                     new EventAttendee { Email = _applicationSettings.MainUserEmail },
-                    new EventAttendee { Email = user.Calendar.Google.Email }
+                    new EventAttendee { Email = user.CalendarEmail }
                 }
             },
             primaryCalendar.Id);
@@ -145,7 +145,7 @@ namespace CFOP.External.Calendar.Google
 
             return events.Items
                 .Where(eventItem => eventItem.Attendees != null &&
-                    eventItem.Attendees.Any(a => a.Email == user.Calendar.Google.Email))
+                    eventItem.Attendees.Any(a => a.Email == user.CalendarEmail))
                 .Select(eventItem =>
             {
                 var start = ExtractTime(eventItem.Start);
@@ -181,7 +181,7 @@ namespace CFOP.External.Calendar.Google
             var user = _userRepository.FindById(userId);
             if(user == null) throw new ArgumentException($"No user with id {userId} found");
 
-            var calendarSecret = new MemoryStream(Encoding.UTF8.GetBytes(user.Calendar.Google.ClientSecret));
+            var calendarSecret = new MemoryStream(Encoding.UTF8.GetBytes(user.CalendarClientSecret));
 
             var credPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.Personal), 

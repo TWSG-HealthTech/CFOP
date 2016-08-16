@@ -11,28 +11,18 @@
   ```
   [
     {
-      "id": 1,
       "skype": "{first_skype_id}",
       "aliases": [ "son", "other_alias" ],
-      "calendar": {
-        "google": {
-          "email": "{calendar_email}",
-          "calendarNames": "Singapore Events,Blah blah",
-          "clientSecret": {google_calendar_secret_file_content}
-        }
-      }
+      "calendarEmail": "{calendar_email}",
+      "calendarNames": "Singapore Events,Blah blah",
+      "calendarClientSecret": {google_calendar_secret_file_content}
     },
     {
-      "id": 2,
       "skype": "{second_skype_id}",
       "aliases": [ "daughter", "another_alias" ],
-      "calendar": {
-        "google": {
-          "email": "{calendar_email}",
-          "calendarNames": "Singapore Events,Blah blah",
-          "clientSecret": {google_calendar_secret_file_content}
-        }
-      }
+      "calendarEmail": "{calendar_email}",
+      "calendarNames": "Singapore Events,Blah blah",
+      "calendarClientSecret": {google_calendar_secret_file_content}
     }
   ]
   ```

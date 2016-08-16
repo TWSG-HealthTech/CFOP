@@ -183,9 +183,9 @@
     <Compile Include="Migrations\20160815040315_CreateMedicinesTable.designer.cs">
       <DependentUpon>20160815040315_CreateMedicinesTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\20160816041017_CreateUsersTable.cs" />
-    <Compile Include="Migrations\20160816041017_CreateUsersTable.designer.cs">
-      <DependentUpon>20160816041017_CreateUsersTable.cs</DependentUpon>
+    <Compile Include="Migrations\20160816070814_CreateUsersTable.cs" />
+    <Compile Include="Migrations\20160816070814_CreateUsersTable.designer.cs">
+      <DependentUpon>20160816070814_CreateUsersTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\CateContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
