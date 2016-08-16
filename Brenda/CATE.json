@@ -14,6 +14,9 @@
       "name": "BuyStuff"
     },
     {
+      "name": "ListMedication"
+    },
+    {
       "name": "None"
     },
     {
@@ -970,6 +973,32 @@
     {
       "text": "find me nearby social clubs",
       "intent": "ShowSocialClubs",
+      "entities": []
+    },
+    {
+      "text": "what medicines do i have?",
+      "intent": "ListMedication",
+      "entities": []
+    },
+    {
+      "text": "what is my medication?",
+      "intent": "ListMedication",
+      "entities": []
+    },
+    {
+      "text": "what is my son doing",
+      "intent": "ShowCalendar",
+      "entities": [
+        {
+          "entity": "Person",
+          "startPos": 3,
+          "endPos": 3
+        }
+      ]
+    },
+    {
+      "text": "what medicine do i have",
+      "intent": "ListMedication",
       "entities": []
     }
   ]

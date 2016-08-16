@@ -4,6 +4,7 @@ using System.Linq;
 using CFOP.Service.Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+﻿using System.Collections.Immutable;
 
 namespace CFOP.Repository.Data
 {
@@ -34,6 +35,14 @@ namespace CFOP.Repository.Data
 
                 users.ForEach(u => ctx.Users.Add(u));
                 ctx.SaveChanges();
+            }
+        }
+
+        public static IList<Medicine> AllMedicines()
+        {
+            using (var ctx = new CateContext())
+            {
+                return ctx.Medicines.ToImmutableList();
             }
         }
     }

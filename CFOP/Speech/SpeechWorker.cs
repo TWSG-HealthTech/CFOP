@@ -5,6 +5,7 @@ using System.Linq;
 using Appccelerate.StateMachine;
 using CFOP.Common;
 using CFOP.Infrastructure.Settings;
+using CFOP.Repository.Data;
 using CFOP.VideoCall.Events;
 using CFOPIConversation = CFOP.Speech.IConversation;
 using Microsoft.ProjectOxford.SpeechRecognition;
@@ -177,6 +178,31 @@ namespace CFOP.Speech
             {
                 _ss.Speak("Please wait a moment while I look for social clubs nearby.");
                 _ss.Speak("I could not find any social clubs nearby.");
+            }
+            else if (intentName == "ListMedication")
+            {
+                var medicines = Store.AllMedicines();
+                if (medicines.Any())
+                {
+                    string list;
+                    if (medicines.Count > 1)
+                    {
+                        list =
+                            medicines.Take(medicines.Count - 1)
+                                .Select(m => m.Name)
+                                .Aggregate((acc, item) => $"{acc}, {item}");
+                        list += $" and {medicines.Last().Name}";
+                    }
+                    else
+                    {
+                        list = medicines.Last().Name;
+                    }
+                    _ss.Speak($"You have {list}");
+                }
+                else
+                {
+                    _ss.Speak("You have no medicine.");
+                }
             }
             else if (intentName == "BuyStuff" && intent.IsActionTriggered("BuyStuff"))
             {
