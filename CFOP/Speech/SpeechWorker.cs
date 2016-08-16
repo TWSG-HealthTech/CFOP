@@ -177,7 +177,21 @@ namespace CFOP.Speech
             else if (intentName == "ShowSocialClubs")
             {
                 _ss.Speak("Please wait a moment while I look for social clubs nearby.");
-                _ss.Speak("I could not find any social clubs nearby.");
+                using(var context = new CateContext())
+                {
+                    var listOfClubs = Store.AllSocialClubs();
+                    if (listOfClubs.Any())
+                    {
+                        listOfClubs.ForEach(sc =>
+                        {
+                            _ss.Speak($"The {sc.ClubName} meets at {sc.Venue}. Their contact number is {sc.ContactNumber}.");
+                        }); 
+                    }
+                    else
+                    {
+                        _ss.Speak("I could not find any social clubs nearby.");
+                    }
+                }
             }
             else if (intentName == "ListMedication")
             {

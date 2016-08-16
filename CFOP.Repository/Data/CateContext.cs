@@ -35,6 +35,14 @@ namespace CFOP.Repository.Data
 
                 users.ForEach(u => ctx.Users.Add(u));
                 ctx.SaveChanges();
+
+                var existingClubs = ctx.SocialClubs.ToList();
+                existingClubs.ForEach(s => ctx.Remove(s));
+                ctx.SaveChanges();
+
+                ctx.SocialClubs.Add(new SocialClub() { ClubName = "Rambling", Venue = "Amoy Street", ContactNumber = "65319827" });
+                ctx.SocialClubs.Add(new SocialClub() { ClubName = "Tea time club", Venue = "Telok Ayer Street", ContactNumber = "91234567" });
+                ctx.SaveChanges();
             }
         }
 
@@ -43,6 +51,14 @@ namespace CFOP.Repository.Data
             using (var ctx = new CateContext())
             {
                 return ctx.Medicines.ToImmutableList();
+            }
+        }
+
+        public static IList<SocialClub> AllSocialClubs()
+        {
+            using (var ctx = new CateContext())
+            {
+                return ctx.SocialClubs.ToImmutableList();
             }
         }
     }
@@ -68,11 +84,20 @@ namespace CFOP.Repository.Data
 
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<SocialClub> SocialClubs { get; set; }
     }
 
     public class Medicine
     {
         public int Id { get; set; }
         public string Name { get; set; }
+    }
+
+    public class SocialClub
+    {
+        public int Id { get; set; }
+        public string ClubName { get; set; }
+        public string Venue { get; set; }
+        public string ContactNumber { get; set; }
     }
 }
