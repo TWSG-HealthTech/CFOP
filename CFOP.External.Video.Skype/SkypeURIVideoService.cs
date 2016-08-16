@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
-using CFOP.Service.Common.DTO;
+using CFOP.Service.Common.Models;
 using CFOP.Service.VideoCall;
 
 namespace CFOP.External.Video.Skype

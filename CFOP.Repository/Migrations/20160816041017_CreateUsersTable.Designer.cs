@@ -8,9 +8,10 @@ using CFOP.Repository.Data;
 namespace CFOP.Repository.Migrations
 {
     [DbContext(typeof(CateContext))]
-    partial class CateContextModelSnapshot : ModelSnapshot
+    [Migration("20160816041017_CreateUsersTable")]
+    partial class CreateUsersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");

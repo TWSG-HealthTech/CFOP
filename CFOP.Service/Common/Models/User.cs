@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CFOP.Infrastructure.JSON;
 using Newtonsoft.Json;
 
-namespace CFOP.Service.Common.DTO
+namespace CFOP.Service.Common.Models
 {
     public class User
     {
@@ -29,6 +28,20 @@ namespace CFOP.Service.Common.DTO
         public IList<string> Aliases { get; private set; }
         public CalendarSettings Calendar { get; private set; }
 
+        [JsonIgnore]
+        public string SerializedAliases
+        {
+            get { return JsonConvert.SerializeObject(Aliases); }
+            set { Aliases = JsonConvert.DeserializeObject<List<string>>(value); }
+        }
+
+        [JsonIgnore]
+        public string SerializedCalendar
+        {
+            get { return JsonConvert.SerializeObject(Calendar); }
+            set { Calendar = JsonConvert.DeserializeObject<CalendarSettings>(value); }
+        }
+
         [JsonConstructor]
         public User(int id, string skype, IList<string> aliases, CalendarSettings calendar)
         {
@@ -37,6 +50,8 @@ namespace CFOP.Service.Common.DTO
             Aliases = aliases;
             Calendar = calendar;
         }
+
+        private User() { }
 
         public bool HasAlias(string alias)
         {

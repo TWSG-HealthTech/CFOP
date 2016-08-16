@@ -4,7 +4,7 @@ using Appccelerate.StateMachine;
 using CFOP.Common;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.Common;
-using CFOP.Service.Common.DTO;
+using CFOP.Service.Common.Models;
 using CFOP.Service.VideoCall;
 using CFOP.Speech;
 using CFOP.VideoCall.Events;

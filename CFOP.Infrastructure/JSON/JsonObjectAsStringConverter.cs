@@ -9,7 +9,7 @@ namespace CFOP.Infrastructure.JSON
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            throw new NotSupportedException();
+            writer.WriteRawValue(value.ToString());
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)

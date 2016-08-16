@@ -1,4 +1,4 @@
-using CFOP.Service.Common.DTO;
+using CFOP.Service.Common.Models;
 
 namespace CFOP.Service.Common
 {

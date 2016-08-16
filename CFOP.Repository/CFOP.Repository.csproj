@@ -177,10 +177,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\FileBasedUserRepository.cs" />
+    <Compile Include="Common\UserRepository.cs" />
     <Compile Include="Data\CateContext.cs" />
     <Compile Include="Migrations\20160815040315_CreateMedicinesTable.cs" />
     <Compile Include="Migrations\20160815040315_CreateMedicinesTable.designer.cs">
       <DependentUpon>20160815040315_CreateMedicinesTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20160816041017_CreateUsersTable.cs" />
+    <Compile Include="Migrations\20160816041017_CreateUsersTable.designer.cs">
+      <DependentUpon>20160816041017_CreateUsersTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\CateContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

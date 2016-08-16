@@ -1,7 +1,7 @@
 ﻿using System;
 using CFOP.Service.VideoCall;
 using SKYPE4COMLib;
-using Common = CFOP.Service.Common.DTO;
+using User = CFOP.Service.Common.Models.User;
 
 namespace CFOP.External.Video.Skype
 {
@@ -25,7 +25,7 @@ namespace CFOP.External.Video.Skype
             return skype;
         }
 
-        public void Call(Common.User user, Action finishCallback)
+        public void Call(User user, Action finishCallback)
         {
             AttachToSkype();
 

@@ -6,7 +6,7 @@ using System.Windows.Data;
 using CFOP.Common;
 using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
-using CFOP.Service.AppointmentSchedule.DTO;
+using CFOP.Service.AppointmentSchedule.Models;
 using CFOP.Speech.Events;
 using Microsoft.AspNet.SignalR.Client;
 using Prism.Commands;

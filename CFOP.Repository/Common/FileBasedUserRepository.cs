@@ -4,7 +4,7 @@ using System.Linq;
 using CFOP.Infrastructure.JSON;
 using CFOP.Infrastructure.Settings;
 using CFOP.Service.Common;
-using CFOP.Service.Common.DTO;
+using CFOP.Service.Common.Models;
 using Newtonsoft.Json;
 
 namespace CFOP.Repository.Common

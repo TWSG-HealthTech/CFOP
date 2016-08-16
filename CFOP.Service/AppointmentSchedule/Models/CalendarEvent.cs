@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CFOP.Service.AppointmentSchedule.DTO
+namespace CFOP.Service.AppointmentSchedule.Models
 {
     public class CalendarEvent
     {

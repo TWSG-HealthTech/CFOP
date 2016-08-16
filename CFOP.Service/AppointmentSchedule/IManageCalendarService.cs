@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CFOP.Service.AppointmentSchedule.DTO;
-using CFOP.Service.Common.DTO;
+using CFOP.Service.AppointmentSchedule.Models;
+using CFOP.Service.Common.Models;
 
 namespace CFOP.Service.AppointmentSchedule
 {

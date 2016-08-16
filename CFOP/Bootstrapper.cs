@@ -62,7 +62,7 @@ namespace CFOP
             builder.RegisterType<GoogleCalendarService>().As<IManageCalendarService>().SingleInstance();
             builder.RegisterType<SkypeURIVideoService>().As<IVideoService>().SingleInstance();
 
-            builder.RegisterType<FileBasedUserRepository>().As<IUserRepository>().SingleInstance();
+            builder.RegisterType<UserRepository>().As<IUserRepository>().SingleInstance();
 
             builder.RegisterType<NLogAdapter>().As<ILogger>().SingleInstance();
 

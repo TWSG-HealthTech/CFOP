@@ -49,10 +49,11 @@ namespace CFOP
         }
         
         private readonly SpeechWorker _speechWorker;
+        private readonly IApplicationSettings _applicationSettings;
 
         #endregion
 
-        public MainViewModel(SpeechWorker speechWorker, IApplicationSettings applicationSettings, ILogger logger)
+        public MainViewModel(SpeechWorker speechWorker, IApplicationSettings applicationSettings)
         {
             IsInFullScreen = false;
 
@@ -61,6 +62,7 @@ namespace CFOP
             SeedDataCommand = new DelegateCommand(SeedData);
 
             _speechWorker = speechWorker;
+            _applicationSettings = applicationSettings;
             _speechWorker.Write += WriteLine;
             _speechWorker.ShowSpeech += ShowSpeech;
             _speechWorker.Start();
@@ -89,7 +91,7 @@ namespace CFOP
 
         private void SeedData()
         {
-            Store.Seed();
+            Store.Seed(_applicationSettings.UsersFilePath);
         }
 
         #endregion

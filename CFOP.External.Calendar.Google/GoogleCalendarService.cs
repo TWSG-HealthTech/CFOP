@@ -10,14 +10,14 @@ using System.Threading.Tasks;
 using CFOP.Infrastructure.Helpers;
 using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
-using CFOP.Service.AppointmentSchedule.DTO;
+using CFOP.Service.AppointmentSchedule.Models;
 using CFOP.Service.Common;
+using CFOP.Service.Common.Models;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Calendar.v3;
 using Google.Apis.Calendar.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using Common = CFOP.Service.Common.DTO;
 
 namespace CFOP.External.Calendar.Google
 {
@@ -42,7 +42,7 @@ namespace CFOP.External.Calendar.Google
             return await FindScheduleFor(user, date);
         }
 
-        public async Task<IList<CalendarEvent>> FindScheduleFor(Common.User user, DateTime date)
+        public async Task<IList<CalendarEvent>> FindScheduleFor(User user, DateTime date)
         {
             var userId = user.Id;
 
@@ -74,7 +74,7 @@ namespace CFOP.External.Calendar.Google
             return events;
         }
 
-        public async Task<bool> IsUserBusyAt(Common.User user, DateTime time)
+        public async Task<bool> IsUserBusyAt(User user, DateTime time)
         {
             var date = time.ToDate();
             var events = await FindScheduleFor(user, date);
@@ -82,14 +82,14 @@ namespace CFOP.External.Calendar.Google
             return events.Any(e => e.IsBusyAt(time));
         }
 
-        public async Task<bool> IsUserBusyBetween(Common.User user, DateTime from, DateTime to)
+        public async Task<bool> IsUserBusyBetween(User user, DateTime from, DateTime to)
         {
             var date = from.ToDate();
             var events = await FindScheduleFor(user, date);
             return events.Any(e => e.IsBusyBetween(from, to));
         }
 
-        public async Task CreateEventInPrimaryCalendar(Common.User user, CalendarEvent e)
+        public async Task CreateEventInPrimaryCalendar(User user, CalendarEvent e)
         {
             var service = CreateCalendarService(user.Id);
 
@@ -129,7 +129,7 @@ namespace CFOP.External.Calendar.Google
             CalendarService service, 
             CalendarListEntry calendar, 
             DateTime date, 
-            Common.User user)
+            User user)
         {
             var request = service.Events.List(calendar.Id);
             request.TimeMin = date.ToDate();
