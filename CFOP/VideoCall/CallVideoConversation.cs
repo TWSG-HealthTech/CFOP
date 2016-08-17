@@ -8,7 +8,6 @@ using CFOP.Service.Common.Models;
 using CFOP.Service.VideoCall;
 using CFOP.Speech;
 using CFOP.VideoCall.Events;
-using Microsoft.Speech.Synthesis;
 using Prism.Events;
 
 namespace CFOP.VideoCall
@@ -19,7 +18,6 @@ namespace CFOP.VideoCall
         private readonly IUserRepository _userRepository;
         private readonly IVideoService _videoService;
         private readonly IEventAggregator _eventAggregator;
-        private readonly SpeechSynthesizer _speechSynthesizer;
 
         private User _currentUser;
         private string _alias;
@@ -27,15 +25,13 @@ namespace CFOP.VideoCall
         public CallVideoConversation(IManageCalendarService manageCalendarService,
                                     IUserRepository userRepository,
                                     IVideoService videoService,
-                                    IEventAggregator eventAggregator,
-                                    SpeechSynthesizer speechSynthesizer)
+                                    IEventAggregator eventAggregator)
             :base(new List<string> { "CallVideo" })
         {
             _manageCalendarService = manageCalendarService;
             _userRepository = userRepository;
             _videoService = videoService;
             _eventAggregator = eventAggregator;
-            _speechSynthesizer = speechSynthesizer;
         }
 
         protected override PassiveStateMachine<CallVideoStates, CallVideoEvents> Initialize()
@@ -49,8 +45,8 @@ namespace CFOP.VideoCall
                     .Otherwise().Goto(CallVideoStates.Initial).Execute(Call);
 
             conversation.In(CallVideoStates.WaitingConfirmation)
-                .ExecuteOnEntry(() => _speechSynthesizer.Speak($"{_alias} is busy at the moment. Do you still want to call {_alias} now?"))
-                .On(CallVideoEvents.CallCancelled).Goto(CallVideoStates.Initial).Execute(() => _speechSynthesizer.Speak("OK, the call is cancelled"))
+                .ExecuteOnEntry(() => SpeechInstance.Speak($"{_alias} is busy at the moment. Do you still want to call {_alias} now?"))
+                .On(CallVideoEvents.CallCancelled).Goto(CallVideoStates.Initial).Execute(() => SpeechInstance.Speak("OK, the call is cancelled"))
                 .On(CallVideoEvents.CallConfirmed).Goto(CallVideoStates.Initial).Execute(Call);
 
             conversation.Initialize(CallVideoStates.Initial);
@@ -85,7 +81,7 @@ namespace CFOP.VideoCall
 
         private void Call()
         {
-            _speechSynthesizer.Speak("Calling");
+            SpeechInstance.Speak("Calling");
             _eventAggregator.Publish<VideoCallStarted>();
             _videoService.Call(_currentUser, 
                                () => _eventAggregator.Publish<VideoCallStopped>());

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using CFOP.Infrastructure.Logging;
 using CFOP.Infrastructure.Settings;
@@ -61,11 +62,12 @@ namespace CFOP
             ExitFullScreenCommand = new DelegateCommand(ExitFullScreen);
             SeedDataCommand = new DelegateCommand(SeedData);
 
-            _speechWorker = speechWorker;
             _applicationSettings = applicationSettings;
+
+            _speechWorker = speechWorker;
             _speechWorker.Write += WriteLine;
             _speechWorker.ShowSpeech += ShowSpeech;
-            _speechWorker.Start();
+            Task.Run(() => _speechWorker.Start());
         }
 
         #region Commands    

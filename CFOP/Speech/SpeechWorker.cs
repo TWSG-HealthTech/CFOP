@@ -10,7 +10,6 @@ using CFOP.VideoCall.Events;
 using CFOPIConversation = CFOP.Speech.IConversation;
 using Microsoft.ProjectOxford.SpeechRecognition;
 using Microsoft.Speech.Recognition;
-using Microsoft.Speech.Synthesis;
 using Newtonsoft.Json;
 using Prism.Events;
 
@@ -20,7 +19,6 @@ namespace CFOP.Speech
     {
         private readonly IApplicationSettings _applicationSettings;
         private readonly IList<CFOPIConversation> _conversations;
-        private readonly SpeechSynthesizer _ss;
         private SpeechRecognitionEngine _sre;
         private MicrophoneRecognitionClient _microphoneClient;
 
@@ -29,11 +27,9 @@ namespace CFOP.Speech
 
         public SpeechWorker(IApplicationSettings applicationSettings,
                             IEventAggregator eventAggregator,
-                            SpeechSynthesizer synthesizer,
                             IList<CFOPIConversation> conversations)
         {
             _applicationSettings = applicationSettings;
-            _ss = synthesizer;
             _conversations = conversations;
 
             eventAggregator.Subscribe<VideoCallStarted, object>(arg => StopLocalSpeechRecognition());
@@ -42,11 +38,12 @@ namespace CFOP.Speech
 
         public void Start()
         {
+            SpeechInstance.Initialize();
+
             SetupActiveListener();
 
-            _ss.SetOutputToDefaultAudioDevice();
             Write?.Invoke("(Speaking: I am awake)");
-            _ss.Speak("I am awake");
+            SpeechInstance.Speak("I am awake");
 
             var ci = new CultureInfo(_applicationSettings.Locale);
             _sre = new SpeechRecognitionEngine(ci);
@@ -100,7 +97,7 @@ namespace CFOP.Speech
             if (txt.Contains("Jefrey"))
             {
                 Write?.Invoke("Jefrey got woken!");
-                _ss.Speak("Go away, I'm busy!");
+                SpeechInstance.Speak("Go away, I'm busy!");
             }
             else if (txt.Contains("Brenda"))
             {
@@ -110,7 +107,7 @@ namespace CFOP.Speech
             else if (txt.Contains("See Fop"))
             {
                 Write?.Invoke("CFOP got woken!");
-                _ss.Speak("Don't worry, you're not that old!");
+                SpeechInstance.Speak("Don't worry, you're not that old!");
             }
             else if (CommonSpeechChoices.ConfirmChoices().Any(c => c == txt))
             {
@@ -168,15 +165,15 @@ namespace CFOP.Speech
 
             if (intentName == "TellJoke")
             {
-                _ss.Speak("What wobbles in the sky? A jellycopter!");
+                SpeechInstance.Speak("What wobbles in the sky? A jellycopter!");
             }
             else if (intentName == "ThankYou")
             {
-                _ss.Speak("You're most welcome!");
+                SpeechInstance.Speak("You're most welcome!");
             }
             else if (intentName == "ShowSocialClubs")
             {
-                _ss.Speak("Please wait a moment while I look for social clubs nearby.");
+                SpeechInstance.Speak("Please wait a moment while I look for social clubs nearby.");
                 using(var context = new CateContext())
                 {
                     var listOfClubs = Store.AllSocialClubs();
@@ -184,12 +181,12 @@ namespace CFOP.Speech
                     {
                         listOfClubs.ForEach(sc =>
                         {
-                            _ss.Speak($"The {sc.ClubName} meets at {sc.Venue}. Their contact number is {sc.ContactNumber}.");
+                            SpeechInstance.Speak($"The {sc.ClubName} meets at {sc.Venue}. Their contact number is {sc.ContactNumber}.");
                         }); 
                     }
                     else
                     {
-                        _ss.Speak("I could not find any social clubs nearby.");
+                        SpeechInstance.Speak("I could not find any social clubs nearby.");
                     }
                 }
             }
@@ -211,16 +208,16 @@ namespace CFOP.Speech
                     {
                         list = medicines.Last().Name;
                     }
-                    _ss.Speak($"You have {list}");
+                    SpeechInstance.Speak($"You have {list}");
                 }
                 else
                 {
-                    _ss.Speak("You have no medicine.");
+                    SpeechInstance.Speak("You have no medicine.");
                 }
             }
             else if (intentName == "BuyStuff" && intent.IsActionTriggered("BuyStuff"))
             {
-                _ss.Speak($"OK, I'll add {intent.GetFirstIntentActionParameter("BuyStuff", "thing")} to your shopping!");
+                SpeechInstance.Speak($"OK, I'll add {intent.GetFirstIntentActionParameter("BuyStuff", "thing")} to your shopping!");
             }
             else if (_conversations.Any(c => c.CanHandle(intent)))
             {
@@ -229,7 +226,7 @@ namespace CFOP.Speech
             }
             else
             {
-                _ss.Speak("Sorry, I don't know how to do that.");
+                SpeechInstance.Speak("Sorry, I don't know how to do that.");
             }
         }
 
@@ -286,7 +283,7 @@ namespace CFOP.Speech
         {
             if (disposing)
             {
-                _ss.Dispose();
+                SpeechInstance.Dispose();
                 _sre.Dispose();
                 _microphoneClient?.Dispose();
             }

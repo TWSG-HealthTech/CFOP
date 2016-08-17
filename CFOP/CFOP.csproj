@@ -272,6 +272,7 @@
     <Compile Include="Speech\CommonSpeechChoices.cs" />
     <Compile Include="Speech\Events\ShowCalendarEventParameters.cs" />
     <Compile Include="Speech\IntentResponse.cs" />
+    <Compile Include="Speech\SpeechInstance.cs" />
     <Compile Include="Speech\SpeechWorker.cs" />
     <Compile Include="Speech\Events\VoiceCommandInvoked.cs" />
     <Compile Include="Speech\Events\CallVideoEventParameters.cs" />

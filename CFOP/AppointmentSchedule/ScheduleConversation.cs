@@ -24,7 +24,6 @@ namespace CFOP.AppointmentSchedule
         private readonly IEventAggregator _eventAggregator;
         private readonly IManageCalendarService _manageCalendarService;
         private readonly IUserRepository _userRepository;
-        private readonly SpeechSynthesizer _speechSynthesizer;
 
         private string _date;
         private DateTime _dateResolution;
@@ -35,14 +34,12 @@ namespace CFOP.AppointmentSchedule
 
         public ScheduleConversation(IEventAggregator eventAggregator,
                                     IManageCalendarService manageCalendarService,
-                                    IUserRepository userRepository,
-                                    SpeechSynthesizer speechSynthesizer)
+                                    IUserRepository userRepository)
             :base(new List<string> { "ShowCalendar", "ChooseTime" })
         {
             _eventAggregator = eventAggregator;
             _manageCalendarService = manageCalendarService;
             _userRepository = userRepository;
-            _speechSynthesizer = speechSynthesizer;
         }
 
         public override void Handle(IntentResponse.Intent intent)
@@ -133,7 +130,7 @@ namespace CFOP.AppointmentSchedule
 
         private void ShowCalendar()
         {
-            _speechSynthesizer.Speak($"Here is {_date} schedule, what time do you want to schedule the talk?");
+            SpeechInstance.Speak($"Here is {_date} schedule, what time do you want to schedule the talk?");
             _eventAggregator.PublishVoiceEvent(new ShowCalendarEventParameters(_alias, _dateResolution));
         }
 
@@ -147,17 +144,17 @@ namespace CFOP.AppointmentSchedule
 
         private void SayCancel()
         {
-            _speechSynthesizer.Speak("the scheduling is cancelled");
+            SpeechInstance.Speak("the scheduling is cancelled");
         }
 
         private void PromptConfirmation()
         {
-            _speechSynthesizer.Speak("are you sure you want to call at that time?");
+            SpeechInstance.Speak("are you sure you want to call at that time?");
         }
 
         private void PromptReselectTimeslot()
         {
-            _speechSynthesizer.Speak(
+            SpeechInstance.Speak(
                 "selected timeslot is conflicting with the schedule, please choose another timeslot");
         }
 
@@ -170,7 +167,7 @@ namespace CFOP.AppointmentSchedule
                     _chosenTimeResolution.AddHours(TalkDurationInHours)))
                     .Wait();
 
-            _speechSynthesizer.Speak("event is created in calendar");
+            SpeechInstance.Speak("event is created in calendar");
         }
     }
 }
