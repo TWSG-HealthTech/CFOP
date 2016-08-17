@@ -61,6 +61,8 @@
   - In CFOP, click `Connect to Server` to let CFOP receive notification from server
   - In the default web page opened by VS, enter any text and send to CFOP 
 
+\*NOTE: If the CFOP.Server folder in Visual Studio shows something similar to (Load Failed), go to https://www.microsoft.com/net/core#windows, download **.NET Core 1.0.0 - VS 2015 Tooling Preview 2**, and install it.
+
 ## Code Structure
 
 - The project uses Prism region to separate view into different UserControls. Once the application is started, Prism will load UserControl into region in MainWindow according to mapping in Bootstrapper class, .e.g.:
