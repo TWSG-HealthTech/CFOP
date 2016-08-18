@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using CFOP.Service.Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -14,14 +14,24 @@ namespace CFOP.Repository.Data
         {
             using (var ctx = new CateContext())
             {
-                var existingMedicines = ctx.Medicines.ToList();
-                existingMedicines.ForEach(m => ctx.Medicines.Remove(m));
+                ctx.Medicines.RemoveRange(ctx.Medicines);
                 ctx.SaveChanges();
 
-                ctx.Medicines.Add(new Medicine() {Name = "Paracetamol"});
-                ctx.Medicines.Add(new Medicine() {Name = "Ibuprofen"});
-                ctx.Medicines.Add(new Medicine() {Name = "Lemsip"});
+                ctx.Medicines.Add(new Medicine{Name = "Paracetamol", Unit = "Capsule"});
+                ctx.Medicines.Add(new Medicine{Name = "Ibuprofen", Unit = "Tablet"});
+                var lemsip = new Medicine {Name = "Lemsip", Unit = "Sachet"};
+                ctx.Medicines.Add(lemsip);
+                
+                var course = new Course {Medicine = lemsip};
+                foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+                {
+                    foreach (var time in new []{ 9, 13, 19})
+                    {
+                        ctx.MedicationSchedules.Add(new Schedule { Course = course, DayOfWeek = day, Time = new TimeSpan(time, 0, 0), Quantity = 1, Notes = "After food"});
+                    }
+                }
                 ctx.SaveChanges();
+
 
                 var users = new List<User>();
                 using (var reader = new StreamReader(usersFilePath))
@@ -29,15 +39,13 @@ namespace CFOP.Repository.Data
                     users.AddRange(JsonConvert.DeserializeObject<List<User>>(reader.ReadToEnd()));
                 }
 
-                var existingUsers = ctx.Users.ToList();
-                existingUsers.ForEach(u => ctx.Users.Remove(u));
+                ctx.Users.RemoveRange(ctx.Users);
                 ctx.SaveChanges();
 
                 users.ForEach(u => ctx.Users.Add(u));
                 ctx.SaveChanges();
 
-                var existingClubs = ctx.SocialClubs.ToList();
-                existingClubs.ForEach(s => ctx.Remove(s));
+                ctx.SocialClubs.RemoveRange(ctx.SocialClubs);
                 ctx.SaveChanges();
 
                 ctx.SocialClubs.Add(new SocialClub() { ClubName = "Rambling", Venue = "Amoy Street", ContactNumber = "65319827" });
@@ -85,12 +93,32 @@ namespace CFOP.Repository.Data
         public DbSet<Medicine> Medicines { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<SocialClub> SocialClubs { get; set; }
+        public DbSet<Schedule> MedicationSchedules { get; set; }
     }
 
     public class Medicine
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string Unit { get; set; }
+        public IList<Course> Courses { get; set; }
+    }
+
+    public class Course
+    {
+        public int Id { get; set; }
+        public Medicine Medicine { get; set; }
+        public List<Schedule> Schedules { get; set; }
+    }
+
+    public class Schedule
+    {
+        public int Id { get; set; }
+        public Course Course { get; set; }
+        public int Quantity { get; set; }
+        public TimeSpan Time { get; set; }
+        public DayOfWeek DayOfWeek { get; set; }
+        public string Notes { get; set; }
     }
 
     public class SocialClub

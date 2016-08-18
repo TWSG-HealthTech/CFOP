@@ -191,6 +191,10 @@
     <Compile Include="Migrations\20160816081747_CreateSocialClubsTable.designer.cs">
       <DependentUpon>20160816081747_CreateSocialClubsTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20160817092355_MedicationSchedules.cs" />
+    <Compile Include="Migrations\20160817092355_MedicationSchedules.designer.cs">
+      <DependentUpon>20160817092355_MedicationSchedules.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\CateContextModelSnapshot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
