@@ -18,7 +18,9 @@
     "Microsoft.AspNetCore.WebSockets.Server": "0.1.0",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.AspNetCore.Session": "1.0.0",
-    "Google.Apis.Calendar.v3": "1.15.0.584"
+    "Google.Apis.Calendar.v3": "1.15.0.584",
+    "CFOP.Server.Repository": "1.0.0-*",
+    "CFOP.Server.Core": "1.0.0-*"
   },
 
   "tools": {

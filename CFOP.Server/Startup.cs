@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CFOP.Server.Core.Calendar;
+using CFOP.Server.Repository;
+using CFOP.Server.Repository.Calendar;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,6 +30,13 @@ namespace CFOP.Server
             // Add framework services.
             services.AddMvc();
             services.AddSession();
+
+            services.AddEntityFrameworkSqlServer()
+                    .AddDbContext<ServerContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            );
+
+            services.AddScoped<IClientRepository, ClientRepository>();
 
             services.AddSignalR(options =>
             {

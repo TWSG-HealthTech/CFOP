@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CFOP.Server.Controllers.DTO.ConnectionDTO>
+﻿@model IEnumerable<CFOP.Server.Core.Calendar.Client>
 
 <div class="row" style="margin-top: 10px">
     <div class="col-xs-12">
@@ -37,7 +37,7 @@
                         {
                             foreach (var connection in Model)
                             {
-                                <td>@connection.Id</td>
+                                <td>@connection.ConnectionId</td>
                             }
                         }
                     </tr>

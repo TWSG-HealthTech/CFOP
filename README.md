@@ -55,6 +55,7 @@
 
 ## Run CFOP Server
 - `CFOP.Server` project is used as intermediate server that stands between CFOP and Google Calendar. It will receive push notification from Google Calendar and in turn notifies CFOP through WebSocket (using SignalR library)
+- Download and install SQL Server Express and Tools (`ExpressAndTools 64BIT\SQLEXPRWT_x64_ENU.exe`) from https://www.microsoft.com/en-sg/download/details.aspx?id=42299
 - To test sending message from Server to CFOP:
   - Right click solution CFOP, choose Properties. In Startup project, choose Multiple Startup Projects, set `CFOP` and `CFOP.Server` Action to `Start`
   - Run the solution.
