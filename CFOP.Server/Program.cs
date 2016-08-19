@@ -20,10 +20,19 @@ namespace CFOP.Server
                 .UseStartup<Startup>()
                 .Build();
 
-            var dbContext = (ServerContext)host.Services.GetService(typeof(ServerContext));
-            DbInitializer.Seed(dbContext);
+            var hostingEnvironment = Resolve<IHostingEnvironment>(host);
+            if (hostingEnvironment.IsDevelopment())
+            {
+                var dbContext = Resolve<ServerContext>(host);
+                DbInitializer.Seed(dbContext);
+            }
 
             host.Run();
+        }
+
+        private static T Resolve<T>(IWebHost host)
+        {
+            return (T)host.Services.GetService(typeof(T));
         }
     }
 }

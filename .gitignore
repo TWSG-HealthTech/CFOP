@@ -253,6 +253,7 @@ paket-files/
 *.sln.iml
 
 *.secret.config
+*.Release.json
 users.json
 
 PublishProfiles/
