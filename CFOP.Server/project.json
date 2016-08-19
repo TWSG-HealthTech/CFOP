@@ -17,7 +17,8 @@
     "Microsoft.AspNetCore.SignalR.Server": "0.1.0-rtm-21431",
     "Microsoft.AspNetCore.WebSockets.Server": "0.1.0",
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
-    "Microsoft.AspNetCore.Session": "1.0.0"
+    "Microsoft.AspNetCore.Session": "1.0.0",
+    "Google.Apis.Calendar.v3": "1.15.0.584"
   },
 
   "tools": {
