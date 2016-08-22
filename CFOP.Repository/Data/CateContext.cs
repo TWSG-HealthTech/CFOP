@@ -69,6 +69,14 @@ namespace CFOP.Repository.Data
                 return ctx.SocialClubs.ToImmutableList();
             }
         }
+
+        public static IList<Schedule> AllMedicationSchedules()
+        {
+            using (var ctx = new CateContext())
+            {
+                return ctx.MedicationSchedules.Include(s => s.Course).ThenInclude(c => c.Medicine).ToImmutableList();
+            }
+        }
     }
 
     public class CateContext : DbContext

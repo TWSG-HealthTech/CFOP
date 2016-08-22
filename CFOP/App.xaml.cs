@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using CFOP.Repository.Data;
+﻿using System.Windows;
+using CFOP.Repository.Scheduler;
 
 namespace CFOP
 {
@@ -16,6 +10,7 @@ namespace CFOP
     {
         public App()
         {
+            Initialiser.init();
             var bootstrapper = new Bootstrapper();
             bootstrapper.Run();
         }
