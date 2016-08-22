@@ -7,6 +7,7 @@ using CFOP.Common;
 using CFOP.Infrastructure.Settings;
 using CFOP.Service.AppointmentSchedule;
 using CFOP.Service.AppointmentSchedule.Models;
+using CFOP.Service.Common;
 using CFOP.Speech.Events;
 using Microsoft.AspNet.SignalR.Client;
 using Prism.Commands;
@@ -68,6 +69,7 @@ namespace CFOP.AppointmentSchedule
         private readonly IEventAggregator _eventAggregator;
         private readonly IManageCalendarService _manageCalendarService;
         private readonly IApplicationSettings _applicationSettings;
+        private readonly IUserRepository _userRepository;
         private SubscriptionToken _subscriptionToken;
         private IHubProxy _hub;
         private HubConnection _connection;
@@ -76,7 +78,8 @@ namespace CFOP.AppointmentSchedule
 
         public AppointmentScheduleViewModel(IEventAggregator eventAggregator, 
                                             IManageCalendarService manageCalendarService,
-                                            IApplicationSettings applicationSettings)
+                                            IApplicationSettings applicationSettings,
+                                            IUserRepository userRepository)
         {
             IsIdle = true;
             UserAlias = "son";
@@ -87,6 +90,7 @@ namespace CFOP.AppointmentSchedule
             _eventAggregator = eventAggregator;
             _manageCalendarService = manageCalendarService;
             _applicationSettings = applicationSettings;
+            _userRepository = userRepository;
 
             BindingOperations.EnableCollectionSynchronization(TodayEvents, new object());
 
@@ -124,7 +128,11 @@ namespace CFOP.AppointmentSchedule
                 await _connection.Start();
 
                 _hub.On("CalendarChanged", OnCalendarChanged);
-                await _hub.Invoke("Connect");
+
+                var socialConnections = await _userRepository.FindAllSocialConnections();
+                var primaryCalendarIds = await _manageCalendarService.FindPrimaryCalendarIdsFor(socialConnections);
+
+                await _hub.Invoke("Connect", primaryCalendarIds);
             }
 
             Connected = !Connected;

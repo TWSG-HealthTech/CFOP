@@ -13,5 +13,6 @@ namespace CFOP.Service.AppointmentSchedule
         Task<bool> IsUserBusyAt(User user, DateTime time);
         Task<bool> IsUserBusyBetween(User user, DateTime from, DateTime to);
         Task CreateEventInPrimaryCalendar(User user, CalendarEvent e);
+        Task<List<string>> FindPrimaryCalendarIdsFor(List<User> socialConnections);
     }
 }

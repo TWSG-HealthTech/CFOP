@@ -180,7 +180,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\FileBasedUserRepository.cs" />
     <Compile Include="Common\UserRepository.cs" />
     <Compile Include="Data\CateContext.cs" />
     <Compile Include="Migrations\20160815040315_CreateMedicinesTable.cs" />

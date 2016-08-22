@@ -55,7 +55,7 @@ namespace CFOP.External.Calendar.Google
                 return _eventCache[userId][date];
             }
 
-            var service = CreateCalendarService(userId);
+            var service = CreateCalendarService(user);
 
             var calendarRequest = service.CalendarList.List();
             var calendarList = await calendarRequest.ExecuteAsync();
@@ -91,7 +91,7 @@ namespace CFOP.External.Calendar.Google
 
         public async Task CreateEventInPrimaryCalendar(User user, CalendarEvent e)
         {
-            var service = CreateCalendarService(user.Id);
+            var service = CreateCalendarService(user);
 
             var calendarRequest = service.CalendarList.List();
             var calendarList = await calendarRequest.ExecuteAsync();
@@ -115,6 +115,19 @@ namespace CFOP.External.Calendar.Google
             await insertRequest.ExecuteAsync();
 
             InvalidateCache(user.Id, e.StartTime.ToDate());
+        }
+
+        public async Task<List<string>> FindPrimaryCalendarIdsFor(List<User> socialConnections)
+        {
+            var calendars = await Task.WhenAll(socialConnections.Select(connection =>
+            {
+                var service = CreateCalendarService(connection);
+
+                var calendarRequest = service.CalendarList.Get("primary");
+                return calendarRequest.ExecuteAsync();
+            }));
+
+            return calendars.Select(c => c.Id).ToList();
         }
 
         private void InvalidateCache(int userId, DateTime date)
@@ -165,21 +178,20 @@ namespace CFOP.External.Calendar.Google
             return start.Value;
         }
 
-        private CalendarService CreateCalendarService(int userId)
+        private CalendarService CreateCalendarService(User user)
         {
             var service = new CalendarService(new BaseClientService.Initializer()
             {
-                HttpClientInitializer = ReadUserCredential(userId),
+                HttpClientInitializer = ReadUserCredential(user),
                 ApplicationName = "CFOP",
             });
 
             return service;
         }
 
-        private UserCredential ReadUserCredential(int userId)
+        private UserCredential ReadUserCredential(User user)
         {
-            var user = _userRepository.FindById(userId);
-            if(user == null) throw new ArgumentException($"No user with id {userId} found");
+            if(user == null) throw new ArgumentException($"No user with id {user.Id} found");
 
             var calendarSecret = new MemoryStream(Encoding.UTF8.GetBytes(user.CalendarClientSecret));
 

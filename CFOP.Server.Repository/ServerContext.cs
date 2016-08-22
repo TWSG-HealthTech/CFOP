@@ -13,7 +13,22 @@ namespace CFOP.Server.Repository
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Client>().HasKey(c => c.ConnectionId);
+            modelBuilder.Entity<Subscription>(builder =>
+            {
+                builder.HasKey(s => s.Id);
+                builder.Property(s => s.Id)
+                    .ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<Client>(builder =>
+            {
+                builder.HasKey(c => c.Id);
+                builder.Property(c => c.Id)
+                    .ValueGeneratedOnAdd();
+                builder.HasMany(c => c.Subscriptions)
+                    .WithOne();
+            });
+
         }
     }
 }

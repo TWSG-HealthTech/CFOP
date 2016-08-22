@@ -1,4 +1,6 @@
-﻿using CFOP.Server.Core.Calendar;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CFOP.Server.Core.Calendar;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Hubs;
 
@@ -14,9 +16,14 @@ namespace CFOP.Server.Hubs
             _clientRepository = clientRepository;
         }
 
-        public void Connect()
+        public void Connect(List<string> calendarIds)
         {
-            _clientRepository.Add(new Client(Context.ConnectionId));
+            if (calendarIds.Any())
+            {
+                //Subscribe to google calendar
+
+                _clientRepository.Add(new Client(Context.ConnectionId, calendarIds));
+            }
         }
 
         public void Disconnect()
