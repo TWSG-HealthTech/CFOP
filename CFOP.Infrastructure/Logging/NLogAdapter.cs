@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using System;
+using NLog;
 
 namespace CFOP.Infrastructure.Logging
 {
@@ -9,6 +10,11 @@ namespace CFOP.Infrastructure.Logging
         public void Info(string message)
         {
             _logger.Info(message);
+        }
+
+        public void Fatal(Exception ex, string message = null)
+        {
+            _logger.Fatal(ex, message);
         }
     }
 }

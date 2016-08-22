@@ -19,7 +19,7 @@ namespace CFOP.Speech
 
         public static void Dispose()
         {
-            _synthesizer.Dispose();
+            _synthesizer?.Dispose();
             _synthesizer = null;
         }
     }

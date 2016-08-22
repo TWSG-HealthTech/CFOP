@@ -64,6 +64,7 @@ namespace CFOP.Speech
 
         private void SetupActiveListener()
         {
+            throw new Exception("this is outer exception", new Exception("this is inner exception"));
             _microphoneClient?.Dispose();
             _microphoneClient = SpeechRecognitionServiceFactory.CreateMicrophoneClientWithIntent(
                 _applicationSettings.Locale,
@@ -284,7 +285,7 @@ namespace CFOP.Speech
             if (disposing)
             {
                 SpeechInstance.Dispose();
-                _sre.Dispose();
+                _sre?.Dispose();
                 _microphoneClient?.Dispose();
             }
             // get rid of unmanaged resources
