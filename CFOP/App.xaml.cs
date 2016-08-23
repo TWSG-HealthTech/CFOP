@@ -26,7 +26,11 @@ namespace CFOP
 
             //Unhandled exceptions from main UI dispatcher thread
             DispatcherUnhandledException += (s, e) =>
-                LogUnhandledException(logger, e.Exception, "Application.Current.DispatcherUnhandledException");
+            {
+                e.Handled = true;
+                LogUnhandledException(logger, e.Exception,
+                    "Application.Current.DispatcherUnhandledException");
+            };
 
             //Unhandled exceptions from within each AppDomain that uses a task scheduler for async operations
             TaskScheduler.UnobservedTaskException += (s, e) =>
@@ -36,6 +40,7 @@ namespace CFOP
         private void LogUnhandledException(ILogger logger, Exception exception, string eventName)
         {
             logger.Fatal(exception, eventName);
+            MessageBox.Show($"An exception occurred {exception}");
         }
     }
 }
