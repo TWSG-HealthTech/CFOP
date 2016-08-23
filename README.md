@@ -2,6 +2,7 @@
 
 - The project needs to be built using x86 solution platform
 - Add users.json file to CFOP project with following content, set property to copy to output folder:
+  
   ```
   [
     {

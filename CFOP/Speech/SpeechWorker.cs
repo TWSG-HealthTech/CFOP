@@ -64,7 +64,6 @@ namespace CFOP.Speech
 
         private void SetupActiveListener()
         {
-            throw new Exception("this is outer exception", new Exception("this is inner exception"));
             _microphoneClient?.Dispose();
             _microphoneClient = SpeechRecognitionServiceFactory.CreateMicrophoneClientWithIntent(
                 _applicationSettings.Locale,
