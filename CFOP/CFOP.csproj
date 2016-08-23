@@ -354,9 +354,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <AdditionalFiles Include="AppSettings.secret.config">
+    <None Include="AppSettings.secret.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AdditionalFiles>
+    </None>
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
