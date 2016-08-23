@@ -1,12 +1,6 @@
 ## Set Up
 
 - The project needs to be built using x86 solution platform
-- Open Powershell/Cmd with admin priviledge, cd to Libs folder and run:
-  ```
-  regsvr32.exe Skype4COM.dll
-  ```
-  Skype4COM.dll is also included in installation of Skype at `C:\Program Files (x86)\Common Files\Skype`
-
 - Add users.json file to CFOP project with following content, set property to copy to output folder:
   ```
   [
